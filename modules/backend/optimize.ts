@@ -5,6 +5,7 @@ import { IImageFile, IOptimizeOptions, SupportedExt } from '../common/types'
 import * as fu from '../common/file-utils'
 import {
   pngquant, mozjpeg, cwebp, IOptimizeMethod,
+  cavif,
 } from '../optimizers'
 import { getFileUrl } from '../common/file-utils'
 import convert from './convert'
@@ -62,6 +63,7 @@ const optimize = async (
       [SupportedExt.png]: pngquant,
       [SupportedExt.jpg]: mozjpeg,
       [SupportedExt.webp]: cwebp,
+      [SupportedExt.avif]: cavif,
     }
 
     const optimizeMethod = factory[exportExt]

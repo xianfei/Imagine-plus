@@ -33,6 +33,7 @@ class TargetTypeSelect extends PureComponent<ITargetTypeSelectProps, Empty> {
         </option>
         <option value={SupportedExt.jpg}>To JPG</option>
         <option value={SupportedExt.webp}>To WebP</option>
+        <option value={SupportedExt.avif}>To AVIF</option>
       </Select>
     )
   }

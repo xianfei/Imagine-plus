@@ -1,7 +1,7 @@
 {
   "name": "Imagine",
   "private": true,
-  "version": "0.7.5",
+  "version": "0.8.0",
   "description": "PNG/JPEG optimization app",
   "homepage": "https://github.com/meowtec/Imagine",
   "repository": {
@@ -42,7 +42,7 @@
     "classnames": "^2.2.6",
     "cross-env": "^7.0.3",
     "css-loader": "^6.6.0",
-    "electron": "^12.2.3",
+    "electron": "^31.7.7",
     "electron-builder": "^23.3.3",
     "electron-devtools-installer": "^3.1.1",
     "eslint": "^8.9.0",
@@ -87,6 +87,7 @@
     "jimp": "^0.16.1",
     "lodash": "^4.17.21",
     "raw-body": "^2.4.1",
+    "sharp": "^0.33.5",
     "tslib": "^2.1.0"
   },
   "build": {

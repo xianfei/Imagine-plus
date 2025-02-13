@@ -40,6 +40,7 @@ class OptionsPanel extends PureComponent<IProps & IDispatchProps> {
       png: createOptionsChangeHandler(SupportedExt.png),
       jpg: createOptionsChangeHandler(SupportedExt.jpg),
       webp: createOptionsChangeHandler(SupportedExt.webp),
+      avif: createOptionsChangeHandler(SupportedExt.avif),
     }
   })()
 
@@ -109,6 +110,17 @@ class OptionsPanel extends PureComponent<IProps & IDispatchProps> {
                 ext={SupportedExt.webp}
                 options={optionsMap.webp}
                 onChange={this.onOptionsChanges.webp}
+              />
+            </div>
+          </Collapse>
+
+          <Collapse title="AVIF" initialVisible>
+            <div className="collapse-row">
+              <ImageOptions
+                precision
+                ext={SupportedExt.avif}
+                options={optionsMap.avif}
+                onChange={this.onOptionsChanges.avif}
               />
             </div>
           </Collapse>

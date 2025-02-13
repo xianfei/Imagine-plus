@@ -59,13 +59,12 @@ export default class ImageOptions extends PureComponent<ImageOptionsProps, Empty
     const { ext } = this.props
 
     switch (ext) {
-      case SupportedExt.jpg:
-      case SupportedExt.webp:
-        return this.renderJPGWebp()
-
       case SupportedExt.png:
         return this.renderPNG()
+      case SupportedExt.jpg:
+      case SupportedExt.webp:
       default:
+        return this.renderJPGWebp()
     }
 
     return null

@@ -33,6 +33,12 @@ export const createOptimizeOptions = (ext: SupportedExt) => {
       })
       break
 
+    case SupportedExt.avif:
+      Object.assign(optimizeOptions, {
+        quality: 60,
+      })
+      break
+
     case SupportedExt.png:
       Object.assign(optimizeOptions, {
         color: 128,
@@ -224,6 +230,7 @@ export default handleActions<IState, any>({
       png: createOptimizeOptions(SupportedExt.png),
       jpg: createOptimizeOptions(SupportedExt.jpg),
       webp: createOptimizeOptions(SupportedExt.webp),
+      avif: createOptimizeOptions(SupportedExt.avif),
     },
     ...savedOptions,
   },

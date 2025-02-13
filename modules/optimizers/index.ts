@@ -2,6 +2,7 @@ import { spawn } from 'child-process-promise'
 import log from 'electron-log'
 import * as bins from './bin'
 import { IOptimizeOptions } from '../common/types'
+const sharp = require("sharp");
 
 const createEnv = () => ({
   ...process.env,
@@ -86,4 +87,22 @@ export const cwebp: IOptimizeMethod = (
   }).catch((e) => {
     throw new Error(`${e.message}\n${e.stderr}`)
   })
+}
+
+export const cavif: IOptimizeMethod = (
+  input,
+  output,
+  options,
+) => {
+  const { quality = 60 } = options
+
+  log.info('Converting to AVIF with quality', quality)
+
+  const pipeline = sharp(input).avif({ quality })
+
+  pipeline.keepMetadata();
+
+  return (pipeline.toFile(output)).catch((e:{message:any}) => {
+      throw new Error(`${e.message}`)
+    })
 }
