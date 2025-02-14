@@ -41,23 +41,23 @@ const optimize = async (
      * pngquant on linux / windows does not support JPEG to PNG.
      * in this case, we should use JIMP converting JPEG to PNG firstly.
      */
-    if (platform !== 'darwin' && image.ext === 'jpg' && exportExt === 'png') {
-      log.info(
-        'optimize',
-        'should use JIMP for converting JPEG to PNG',
-      )
+    // if (platform !== 'darwin' && image.ext === 'jpg' && exportExt === 'png') {
+    //   log.info(
+    //     'optimize',
+    //     'should use JIMP for converting JPEG to PNG',
+    //   )
 
-      const intermediate = sourcePath.replace(/\.jpg$/, '.1.png')
+    //   const intermediate = sourcePath.replace(/\.jpg$/, '.1.png')
 
-      try {
-        await fs.access(intermediate)
-      } catch (error) {
-        log.info('optimize', 'miss cache (JIMP)')
-        await convert(sourcePath, intermediate)
-      }
+    //   try {
+    //     await fs.access(intermediate)
+    //   } catch (error) {
+    //     log.info('optimize', 'miss cache (JIMP)')
+    //     await convert(sourcePath, intermediate)
+    //   }
 
-      sourcePath = intermediate
-    }
+    //   sourcePath = intermediate
+    // }
 
     const factory: { [ext: string]: IOptimizeMethod } = {
       [SupportedExt.png]: pngquant,

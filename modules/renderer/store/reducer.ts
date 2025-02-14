@@ -35,7 +35,7 @@ export const createOptimizeOptions = (ext: SupportedExt) => {
 
     case SupportedExt.avif:
       Object.assign(optimizeOptions, {
-        quality: 60,
+        quality: 50,
       })
       break
 

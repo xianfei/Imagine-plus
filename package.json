@@ -101,7 +101,7 @@
       "bin"
     ],
     "extraResources": [
-      "node_modules/@img"
+      "node_modules/@img/sharp-${platform}-${arch}"
     ],
     "appId": "com.meowtec.imagine.app",
     "mac": {
