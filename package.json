@@ -43,7 +43,7 @@
     "cross-env": "^7.0.3",
     "css-loader": "^6.6.0",
     "electron": "^31.7.7",
-    "electron-builder": "^23.3.3",
+    "electron-builder": "^25.1.8",
     "electron-devtools-installer": "^3.1.1",
     "eslint": "^8.9.0",
     "eslint-config-airbnb": "^19.0.4",
@@ -99,6 +99,9 @@
     ],
     "asarUnpack": [
       "bin"
+    ],
+    "extraResources": [
+      "node_modules/@img"
     ],
     "appId": "com.meowtec.imagine.app",
     "mac": {
