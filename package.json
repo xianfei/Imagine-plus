@@ -17,7 +17,8 @@
     "start": "npm run build && electron .",
     "pack": "npm run build && electron-builder --dir",
     "release": "npm run build && electron-builder --publish always",
-    "test": "tsc && npm run lint && jest"
+    "test": "tsc && npm run lint && jest",
+    "macos": "npm install --cpu=x64 --os=darwin sharp && npm install --cpu=arm64 --os=darwin sharp"
   },
   "author": "meowtec<bertonzh@gmail.com>",
   "license": "ISC",
@@ -45,6 +46,7 @@
     "electron": "^31.7.7",
     "electron-builder": "^25.1.8",
     "electron-devtools-installer": "^3.1.1",
+    "electron-rebuild": "^3.2.9",
     "eslint": "^8.9.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^16.1.0",
@@ -94,14 +96,11 @@
     "files": [
       "index.html",
       "lib",
-      "dist/web",
-      "bin/${platform}/${arch}/**/*"
+      "dist/web"
     ],
-    "asarUnpack": [
-      "bin"
-    ],
-    "extraResources": [
-      "node_modules/@img/sharp-${platform}-${arch}"
+    "extraResources":[
+      "node_modules/@img/sharp-${platform}-${arch}",
+      "node_modules/@img/sharp-libvips-${platform}-${arch}"
     ],
     "appId": "com.meowtec.imagine.app",
     "mac": {

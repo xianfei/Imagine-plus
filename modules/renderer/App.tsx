@@ -46,11 +46,8 @@ class App extends PureComponent<Record<string, never>, { onion: number }> {
     apis.fileAdd(files)
 
     e.preventDefault();
-      //属性指定拖放操作所允许的一个效果。copy 操作用于指示被拖动的数据将从当前位置复制到放置位置。
-      // move操作用于指定被拖动的数据将被移动。 link操作用于指示将在源和放置位置之间创建某种形式的关系或连接。
-      e.dataTransfer.effectAllowed = 'none';
-      // 属性控制在拖放操作中给用户的反馈（通常是视觉上的）。它会影响在拖拽过程中光标的手势。
-      e.dataTransfer.dropEffect = 'none';
+    e.dataTransfer.effectAllowed = 'none';
+    e.dataTransfer.dropEffect = 'none';
   }
 
   render() {
