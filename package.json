@@ -12,13 +12,15 @@
   "scripts": {
     "lint": "tsc --noEmit && eslint --ext .js,.jsx,.ts,.tsx modules",
     "tscw": "tsc -w",
+    "cpscheme" : "copyfiles -f scheme.json node_modules/app-builder-lib/",
     "dev": "tsc && cross-env IMAGINE_ENV=development electron .",
-    "build": "rimraf lib dist && tsc && cross-env IMAGINE_ENV=production vite build",
+    "build": "rimraf lib dist && tsc && cross-env IMAGINE_ENV=production vite build && npm run cpscheme",
     "start": "npm run build && electron .",
     "pack": "npm run build && electron-builder --dir",
     "release": "npm run build && electron-builder --publish always",
     "test": "tsc && npm run lint && jest",
-    "macos": "npm install --cpu=x64 --os=darwin sharp && npm install --cpu=arm64 --os=darwin sharp"
+    "buildmacarm": "npm run build && npm uninstall sharp && npm install --cpu=arm64 --os=darwin sharp",
+    "buildmacx64": "npm run build && npm uninstall sharp && npm install --cpu=x64 --os=darwin sharp"
   },
   "author": "meowtec<bertonzh@gmail.com>",
   "license": "ISC",
@@ -41,6 +43,7 @@
     "babel-core": "^6.26.3",
     "babel-loader": "^8.2.2",
     "classnames": "^2.2.6",
+    "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
     "css-loader": "^6.6.0",
     "electron": "^31.7.7",
@@ -98,19 +101,18 @@
       "lib",
       "dist/web"
     ],
-    "extraResources":[
-      "node_modules/@img/sharp-${platform}-${arch}",
-      "node_modules/@img/sharp-libvips-${platform}-${arch}"
+    "asarUnpack": [
+      "**/node_modules/@img/sharp-${platform}-${arch}",
+      "**/node_modules/@img/sharp-libvips-${platform}-${arch}"
     ],
     "appId": "com.meowtec.imagine.app",
+    "dmg": {
+      "format": "ULMO"
+    },
     "mac": {
       "category": "public.app-category.graphics-design",
       "target": {
-        "target": "dmg",
-        "arch": [
-          "x64",
-          "arm64"
-        ]
+        "target": "dmg"
       }
     },
     "win": {
