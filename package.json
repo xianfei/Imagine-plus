@@ -3,10 +3,10 @@
   "private": true,
   "version": "0.8.0",
   "description": "PNG/JPEG optimization app",
-  "homepage": "https://github.com/meowtec/Imagine",
+  "homepage": "https://github.com/xianfei/Imagine-plus",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/meowtec/Imagine.git"
+    "url": "git+https://github.com/xianfei/Imagine-plus.git"
   },
   "main": "./lib/bootstrap.js",
   "scripts": {
@@ -22,7 +22,7 @@
     "buildmacarm": "npm run build && npm uninstall sharp && npm install --cpu=arm64 --os=darwin sharp",
     "buildmacx64": "npm run build && npm uninstall sharp && npm install --cpu=x64 --os=darwin sharp"
   },
-  "author": "meowtec<bertonzh@gmail.com>",
+  "author": "meowtec<bertonzh@gmail.com> & xianfei<xianfei@bupt.cn>",
   "license": "ISC",
   "devDependencies": {
     "@types/electron-devtools-installer": "~2.2.0",
