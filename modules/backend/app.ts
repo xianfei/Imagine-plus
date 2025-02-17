@@ -16,6 +16,11 @@ import { listenAsyncCall } from '../bridge/async-call/main'
 import optimize from './optimize'
 import { saveFiles, saveFile } from './save'
 import Menu from './menu'
+import { setupTitlebar, attachTitlebarToWindow } from "custom-electron-titlebar/main";
+
+
+setupTitlebar();
+
 
 class App {
   private windows: number[] = []
@@ -68,6 +73,9 @@ class App {
       width: baseWidth + (os.platform() === 'darwin' ? 15 : 34),
       height: 600,
       minWidth: 540,
+      titleBarStyle: 'hidden',
+    /* You can use *titleBarOverlay: true* to use the original Windows controls */
+    // titleBarOverlay: true,
       // titleBarStyle: 'hidden',
       webPreferences: {
         nodeIntegration: true,
@@ -78,6 +86,8 @@ class App {
     })
 
     const { id } = win
+
+    attachTitlebarToWindow(win);
 
     log(url)
     win.loadURL(url).then(() => {
