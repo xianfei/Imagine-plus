@@ -23,13 +23,11 @@ Save for web.
 
 For Windows, macOS and Linux, download binaries from:
 
-[https://github.com/meowtec/Imagine/releases](https://github.com/meowtec/Imagine/releases)
+[https://github.com/xianfei/Imagine-plus/releases](https://github.com/xianfei/Imagine-plus/releases)
 
  - `Imagine-Setup-x.y.z.exe`      - *Windows*
  - `Imagine-x.y.z.dmg`            - *macOS*
  - `Imagine-0.4.1-x.y.z.AppImage` - *Linux*
-
-国内用户从 GitHub 下载可能比较慢，可以使用[国内加速](https://github.com/meowtec/Imagine/issues/7)
 
 ### Install on linux
 
@@ -57,20 +55,12 @@ chmod a+x Imagine-x.y.z-x86_64.AppImage # make executable
 ## Build and Contribute
 
 ```bash
-git clone https://github.com/meowtec/Imagine.git
+git clone https://github.com/xianfei/Imagine-plus.git
 npm install
 npm run dev
 ```
 
-A PR with **all checks passed** is welcome.
-
-Before submit a PR, please run `npm run test` and make sure it success on your machine.
-
-Up to now, there are only [5 locales](https://github.com/meowtec/Imagine/tree/dev/modules/locales). To add a new locale, you can either submit a PR, or [create an issue](https://github.com/meowtec/Imagine/issues/new), or just send me an email(found in [my profile](https://github.com/meowtec)).
-
 ## Built on
 
- - [pngquant](https://pngquant.org/): Lossy PNG compressor
- - [mozjpeg](https://github.com/mozilla/mozjpeg): Improved JPEG encoder
- - [WebP](https://developers.google.com/speed/webp/): A new image format for the Web
+ - [sharp](https://github.com/lovell/sharp): High performance Node.js image processing, the fastest module to resize JPEG, PNG, WebP, AVIF and TIFF images. Uses the libvips library.
  - [Electron](https://electron.atom.io/): Build cross platform desktop apps with JavaScript, HTML, and CSS
