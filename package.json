@@ -138,12 +138,6 @@
       ],
       "target": [
         {
-          "target": "snap",
-          "arch": [
-            "x64"
-          ]
-        },
-        {
           "target": "appimage",
           "arch": [
             "x64"
