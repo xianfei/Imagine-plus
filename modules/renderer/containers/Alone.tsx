@@ -74,6 +74,14 @@ class Alone extends PureComponent<IAloneProps & IAloneDispatchProps, IAloneState
   }
 
   handleImageStageChange = (value: ImageStage) => {
+    const { task } = this.props
+
+    if (!task) return
+
+    if (task.image.ext === SupportedExt.heic) {
+      alert("Preview is not supported for HEIC images.")
+      return
+    }
     this.setState({
       imageStage: value,
     })

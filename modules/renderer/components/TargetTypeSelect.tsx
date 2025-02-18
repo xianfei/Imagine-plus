@@ -18,9 +18,14 @@ class TargetTypeSelect extends PureComponent<ITargetTypeSelectProps, Empty> {
   }
 
   render() {
-    const {
+    let {
       className, targetExt,
     } = this.props
+
+    if(targetExt === SupportedExt.heic) {
+      targetExt = SupportedExt.jpg
+    }
+
 
     return (
       <Select

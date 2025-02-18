@@ -92,7 +92,7 @@ class TaskView extends PureComponent<ITaskProps & ITaskDispatchProps, Empty> {
           <img
             src={destImage.url}
             loading="lazy"
-            alt="task-cover"
+            alt="Loading..."
           />
           <div className="image-view-menu">
             <Popper

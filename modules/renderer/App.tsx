@@ -40,7 +40,7 @@ class App extends PureComponent<Record<string, never>, { onion: number }> {
     console.log(e.dataTransfer.files)
 
     const files = Array.from(e.dataTransfer.files)
-      .filter((file) => !file.type || /png|jpeg|webp|avif/.test(file.type))
+      .filter((file) => !file.type || /png|jpeg|webp|avif|heic/.test(file.type))
       .map((file) => file.path)
 
     apis.fileAdd(files)

@@ -58,7 +58,8 @@ class AppMenu extends EventEmitter {
           'jpeg',
           'png',
           'avif',
-          'webp'
+          'webp',
+          'heic'
         ],
       }],
       properties,

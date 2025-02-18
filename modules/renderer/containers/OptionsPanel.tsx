@@ -41,6 +41,7 @@ class OptionsPanel extends PureComponent<IProps & IDispatchProps> {
       jpg: createOptionsChangeHandler(SupportedExt.jpg),
       webp: createOptionsChangeHandler(SupportedExt.webp),
       avif: createOptionsChangeHandler(SupportedExt.avif),
+      heic: createOptionsChangeHandler(SupportedExt.heic),
     }
   })()
 
@@ -58,6 +59,7 @@ class OptionsPanel extends PureComponent<IProps & IDispatchProps> {
       jpg: createExtChangeHandler(SupportedExt.jpg),
       webp: createExtChangeHandler(SupportedExt.webp),
       avif: createExtChangeHandler(SupportedExt.avif),
+      heic: createExtChangeHandler(SupportedExt.jpg),
     }
   })()
 
@@ -106,7 +108,7 @@ class OptionsPanel extends PureComponent<IProps & IDispatchProps> {
           </Collapse>
 
           <Collapse title="WebP" initialVisible>
-          <div className="collapse-row target-ext-select-row">
+            <div className="collapse-row target-ext-select-row">
               <TargetTypeSelect
                 className="target-ext-select"
                 onChange={this.onExtChanges.webp}
@@ -125,7 +127,7 @@ class OptionsPanel extends PureComponent<IProps & IDispatchProps> {
           </Collapse>
 
           <Collapse title="AVIF" initialVisible>
-          <div className="collapse-row target-ext-select-row">
+            <div className="collapse-row target-ext-select-row">
               <TargetTypeSelect
                 className="target-ext-select"
                 onChange={this.onExtChanges.avif}
@@ -140,6 +142,15 @@ class OptionsPanel extends PureComponent<IProps & IDispatchProps> {
                 options={optionsMap.avif}
                 onChange={this.onOptionsChanges.avif}
               />
+            </div>
+          </Collapse>
+
+          <Collapse title="Setting" initialVisible>
+            <div className="collapse-row">
+              <label>
+                <input type="checkbox" />
+                Remove metadata
+              </label>
             </div>
           </Collapse>
         </div>

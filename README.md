@@ -4,16 +4,16 @@ What's changed in this fork:
 
 - Added support for AVIF format
 
-|  | from JPG | from PNG | from WebP | from AVIF |
-| --- | --- | --- | --- | --- |
-| to JPG | ✅ | ✅ | ✅ | ✅ |
-| to PNG | ✅ | ✅ | ✅ | ✅ |
-| to WebP | ✅ | ✅ | ✅ | ✅ |
-| to AVIF | ✅ | ✅ | ✅ | ✅ |
+|  | from JPG | from PNG | from WebP | from AVIF | from HEIC |
+| --- | --- | --- | --- | --- | --- |
+| to JPG | ✅ | ✅ | ✅ | ✅ | ✅ |
+| to PNG | ✅ | ✅ | ✅ | ✅ | ✅ |
+| to WebP | ✅ | ✅ | ✅ | ✅ | ✅ |
+| to AVIF | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 # Imagine
 
-[![build](https://travis-ci.org/meowtec/Imagine.svg?branch=master)](https://travis-ci.org/meowtec/Imagine)
+[![build](https://travis-ci.org/xianfei/Imagine-plus.svg?branch=master)](https://travis-ci.org/xianfei/Imagine-plus)
 
 Imagine is a desktop app for compression of PNG and JPEG, with a modern and friendly UI.
 
