@@ -95,6 +95,7 @@ export const flattenFiles = async (filePaths: string[]) => {
       if (stat.isFile()) {
         list.push(filePath)
       } else if (stat.isDirectory()) {
+        if(filePath == '.' && (process.env.IMAGINE_ENV == 'development')) return []
         const dirFileNames = await fs.readdir(filePath)
         const dirFiles = dirFileNames.map((name) => path.resolve(filePath, name))
         const dirFlatFiles = await flattenFiles(dirFiles)

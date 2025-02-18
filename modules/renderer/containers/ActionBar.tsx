@@ -51,7 +51,9 @@ function ActionBar({
   }, [onOptionsVisibleToggle])
 
   return (
-    <div className="action-bar">
+    <div className="action-bar" style={{ paddingLeft: navigator.platform.startsWith('Mac')?"78px":"0", paddingRight: "10px" }}>
+      
+      
       <button type="button" onClick={onAdd}>
         <Icon name="add" />
         <span className="ellipsis">{__('add')}</span>
@@ -73,7 +75,7 @@ function ActionBar({
           </div>
         )}
       >
-        <button type="button" disabled={!count}>
+        <button type="button" disabled={!count} className="expand-button">
           <div>
             <Icon name="down" />
             <span className="ellipsis">{__('save')}</span>
@@ -98,7 +100,7 @@ function ActionBar({
           </div>
         )}
       >
-        <button type="button" disabled={!count}>
+        <button type="button" disabled={!count} className="expand-button">
           <div>
             <Icon name="delete" />
             <span className="ellipsis">{__('clear')}</span>
@@ -115,6 +117,8 @@ function ActionBar({
           </button>
         ) : null
       }
+
+<span className='title-app-name'>Imagine</span>
 
       <div className="blank" />
 

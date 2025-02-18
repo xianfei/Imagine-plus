@@ -68,7 +68,8 @@ class App {
       width: baseWidth + (os.platform() === 'darwin' ? 15 : 34),
       height: 600,
       minWidth: 540,
-      // titleBarStyle: 'hidden',
+      titleBarStyle: "hidden",
+      trafficLightPosition: { x: 20, y: 17 },
       webPreferences: {
         nodeIntegration: true,
         webSecurity: false,
