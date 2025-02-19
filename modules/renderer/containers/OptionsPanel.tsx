@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import {
@@ -23,7 +25,6 @@ function storeset(key: string, value: any) {
 }
 
 function storeget(key: string, def: any) {
-
   console.log("called")
   // @ts-ignore
   const val = imagineAPI?.ipcSendSync('store-get', { key, def })

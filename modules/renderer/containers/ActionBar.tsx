@@ -51,7 +51,7 @@ function ActionBar({
   }, [onOptionsVisibleToggle])
 
   return (
-    <div className="action-bar" style={{ paddingLeft: navigator.platform.startsWith('Mac')?"78px":"0", paddingRight: "10px" }}>
+    <div className="action-bar" style={{ paddingLeft: navigator.platform.startsWith('Mac')?"78px":"0", paddingRight: navigator.platform.startsWith('Win')?"150px":"10px" }}>
       
       
       <button type="button" onClick={onAdd}>

@@ -71,8 +71,13 @@ class App {
       width: baseWidth + (os.platform() === 'darwin' ? 15 : 34),
       height: 600,
       minWidth: 540,
-      titleBarStyle: "hidden",
+      titleBarStyle: os.platform()!='linux'?"hidden":"default",
       trafficLightPosition: { x: 20, y: 17 },
+      titleBarOverlay: {
+        color: "#ffffff00",
+        symbolColor: '#4e4e4e',
+        height: 50,
+      },
       webPreferences: {
         nodeIntegration: true,
         webSecurity: false,
@@ -101,7 +106,7 @@ class App {
       e.preventDefault()
     })
 
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'development' || 1) {
       win.webContents.openDevTools()
     }
 
