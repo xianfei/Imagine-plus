@@ -16,6 +16,9 @@ import { listenAsyncCall } from '../bridge/async-call/main'
 import optimize from './optimize'
 import { saveFiles, saveFile } from './save'
 import Menu from './menu'
+const Store = require('electron-store');
+const store = new Store();
+
 
 class App {
   private windows: number[] = []
@@ -183,6 +186,16 @@ class App {
       menu.aloneMode = state.aloneMode
       menu.render()
     })
+
+    ipcMain.on("store-get", (event, key: any) => {
+      console.log('store-get', key)
+      event.returnValue = store.get(key.key, key.def);
+    });
+
+    ipcMain.on("store-set", (event, key: any) => {
+      console.log('store-set', key)
+      event.returnValue = store.set(key.key, key.value);
+    });
   }
 }
 

@@ -14,6 +14,23 @@ import actions from '../store/actionCreaters'
 import __ from '../../locales'
 
 import './OptionsPanel.less'
+import { imagineAPI } from '../../bridge/web'
+
+function storeset(key: string, value: any) {
+  console.log(value)
+  // @ts-ignore
+  imagineAPI?.ipcSend('store-set', { key, value })
+}
+
+function storeget(key: string, def: any) {
+
+  console.log("called")
+  // @ts-ignore
+  const val = imagineAPI?.ipcSendSync('store-get', { key, def })
+  console.log(val)
+  return val
+}
+
 
 interface IProps {
   optionsMap: IDefaultOptions
@@ -146,11 +163,20 @@ class OptionsPanel extends PureComponent<IProps & IDispatchProps> {
           </Collapse>
 
           <Collapse title="Setting" initialVisible>
-            <div className="collapse-row">
+            <div className="collapse-row more-options">
               <label>
-                <input type="checkbox" />
-                Remove metadata
+                <input type="checkbox" defaultChecked={storeget('keepmeta', true)} onChange={(e) => storeset('keepmeta', e.target.checked)} />
+                <span>Keep Metadata</span>
+              </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <label>
+                <input type="checkbox" defaultChecked={storeget('progressive', true)} onChange={(e) => storeset('progressive', e.target.checked)} />
+                <span>Progressive (for PNG&JPEG)</span>
+              </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <label>
+                <input type="checkbox" defaultChecked={storeget('checkupdate', true)} onChange={(e) => storeset('checkupdate', e.target.checked)} />
+                <span>Check Update</span>
               </label>
+
             </div>
           </Collapse>
         </div>

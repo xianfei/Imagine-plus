@@ -9,6 +9,9 @@ const imagineAPI: ImagineAPI = {
   ipcSend(channel, payload) {
     ipcRenderer.send(channel, payload)
   },
+  ipcSendSync(channel, payload) {
+    return ipcRenderer.sendSync(channel, payload)
+  },
   ipcListen(channel, listener) {
     ipcRenderer.on(channel, (event, payload) => listener(payload))
   },
