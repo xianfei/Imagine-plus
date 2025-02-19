@@ -1,9 +1,11 @@
 # Imagine Plus
 
+![Screenshot](https://github.com/user-attachments/assets/17e78f90-15ca-44c0-b689-fd2d0ab9c6c7)
+
 What's changed in this fork:
 
 - UI improvements
-- More settings (keep metadata, progressive encode, etc.)
+- More features (keep metadata, progressive encode, etc.)
 - Added support for HEIC Decode
 - Added support for WebP Encode/Decode
 - Added support for AVIF Encode/Decode
