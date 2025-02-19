@@ -16,8 +16,7 @@ import { listenAsyncCall } from '../bridge/async-call/main'
 import optimize from './optimize'
 import { saveFiles, saveFile } from './save'
 import Menu from './menu'
-const Store = require('electron-store');
-const store = new Store();
+import store from './settingstore'
 
 
 class App {
@@ -106,7 +105,7 @@ class App {
       e.preventDefault()
     })
 
-    if (process.env.NODE_ENV === 'development' || 1) {
+    if (process.env.IMAGINE_ENV === 'development' || process.execArgv.includes('--inspect')) {
       win.webContents.openDevTools()
     }
 

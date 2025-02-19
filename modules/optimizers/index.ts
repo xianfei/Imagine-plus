@@ -3,6 +3,7 @@ import log from 'electron-log'
 // import * as bins from './bin'
 import { IOptimizeOptions } from '../common/types'
 const sharp = require("sharp");
+import store from '../backend/settingstore'
 
 // const createEnv = () => ({
 //   ...process.env,
@@ -49,9 +50,9 @@ export const mozjpeg: IOptimizeMethod = (
 
   log.info('Converting to jpeg with quality', quality)
 
-  const pipeline = sharp(input).jpeg({ quality, mozjpeg: true , progressive: true })
+  const pipeline = sharp(input).jpeg({ quality, mozjpeg: true , progressive: store.get("progressive", true)})
 
-  pipeline.keepMetadata();
+  if(store.get("keepmeta", true)) pipeline.keepMetadata();
 
   return (pipeline.toFile(output)).catch((e:{message:any}) => {
       throw new Error(`${e.message}`)
@@ -67,9 +68,9 @@ export const pngquant: IOptimizeMethod = (
 
   log.info('Converting to jpeg with colors', color)
 
-  const pipeline = sharp(input).png({ colors:color , progressive: true })
+  const pipeline = sharp(input).png({ colors:color , progressive: store.get("progressive", true) })
 
-  pipeline.keepMetadata();
+  if(store.get("keepmeta", true)) pipeline.keepMetadata();
 
   return (pipeline.toFile(output)).catch((e:{message:any}) => {
       throw new Error(`${e.message}`)
@@ -136,7 +137,7 @@ export const cwebp: IOptimizeMethod = (
 
   const pipeline = sharp(input).webp({ quality })
 
-  pipeline.keepMetadata();
+  if(store.get("keepmeta", true)) pipeline.keepMetadata();
 
   return (pipeline.toFile(output)).catch((e:{message:any}) => {
       throw new Error(`${e.message}`)
@@ -154,7 +155,7 @@ export const cavif: IOptimizeMethod = (
 
   const pipeline = sharp(input).avif({ quality })
 
-  pipeline.keepMetadata();
+  if(store.get("keepmeta", true)) pipeline.keepMetadata();
 
   return (pipeline.toFile(output)).catch((e:{message:any}) => {
       throw new Error(`${e.message}`)

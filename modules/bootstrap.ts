@@ -6,6 +6,7 @@ import updater from './backend/updater'
 import { IS_DEV } from './common/env'
 import { cleanTmpdir } from './common/file-utils'
 import { setup as setupLocales } from './locales'
+import store from './backend/settingstore'
 
 cleanTmpdir()
 
@@ -25,7 +26,7 @@ app.on('ready', () => {
     })
   } else {
     imagine.start(`file://${path.resolve(app.getAppPath(), 'dist/web/index.html')}`)
-    updater.checkForUpdates()
+    if(store.get("checkupdate", true))updater.checkForUpdates()
   }
 })
 
