@@ -193,13 +193,15 @@ class App {
     })
 
     ipcMain.on("store-get", (event, key: any) => {
-      console.log('store-get', key)
       event.returnValue = store.get(key.key, key.def);
     });
 
     ipcMain.on("store-set", (event, key: any) => {
-      console.log('store-set', key)
       event.returnValue = store.set(key.key, key.value);
+    });
+
+    ipcMain.on("exit", async (event, key: any) => {
+      BrowserWindow.fromWebContents(event.sender)?.destroy()
     });
   }
 }

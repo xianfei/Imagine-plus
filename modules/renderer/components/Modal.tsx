@@ -28,6 +28,7 @@ export default class Modal extends PureComponent<IModalProps, Empty> {
                   <button
                     type="button"
                     className="close"
+                    style={{display: navigator.platform.startsWith('Win')?"none":"block"}}
                     onClick={this.props.onClose}
                   >
                     <Icon name="close" />

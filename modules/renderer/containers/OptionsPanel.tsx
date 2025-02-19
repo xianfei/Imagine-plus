@@ -19,16 +19,13 @@ import './OptionsPanel.less'
 import { imagineAPI } from '../../bridge/web'
 
 function storeset(key: string, value: any) {
-  console.log(value)
   // @ts-ignore
   imagineAPI?.ipcSend('store-set', { key, value })
 }
 
 function storeget(key: string, def: any) {
-  console.log("called")
   // @ts-ignore
   const val = imagineAPI?.ipcSendSync('store-get', { key, def })
-  console.log(val)
   return val
 }
 

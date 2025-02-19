@@ -20,6 +20,8 @@ import {
 import __ from '../../locales'
 
 import './Alone.less'
+import { imagineAPI } from '../../bridge/web'
+
 
 interface IAloneProps {
   task?: ITaskItem
@@ -53,10 +55,26 @@ class Alone extends PureComponent<IAloneProps & IAloneDispatchProps, IAloneState
 
   componentDidMount() {
     window.addEventListener('keyup', this.handleKeyPress)
+    window.addEventListener('beforeunload', this.handleBeforeClose)
   }
 
   componentWillUnmount() {
     window.removeEventListener('keyup', this.handleKeyPress)
+    window.removeEventListener('beforeunload', this.handleBeforeClose)
+  }
+
+  handleBeforeClose = (e: Event) => {
+    const { onClose, task  } = this.props
+    
+    if(task) {
+      e.returnValue = false  
+      onClose()
+    }else{
+      e.returnValue = true
+      // @ts-ignore
+      imagineAPI?.ipcSend('exit', 0)
+    }
+    
   }
 
   handleOptionsChange = (options: IOptimizeOptions) => {
