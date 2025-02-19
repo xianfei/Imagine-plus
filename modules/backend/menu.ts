@@ -30,7 +30,7 @@ class AppMenu extends EventEmitter {
       type: 'info',
       title: __('about', pkg.name),
       message: `Imagine v${pkg.version}`,
-      detail: `Created by Meowtec\n${pkg.homepage}`,
+      detail: `Created by Meowtec & xianfei\n${pkg.homepage}`,
       buttons: [__('ok'), __('visit')],
     })
 

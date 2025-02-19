@@ -28,10 +28,10 @@ export default class Modal extends PureComponent<IModalProps, Empty> {
                   <button
                     type="button"
                     className="close"
-                    style={{display: navigator.platform.startsWith('Win')?"none":"block"}}
+                    style={{left: navigator.platform.startsWith('Mac')?"85px":"5px"}}
                     onClick={this.props.onClose}
                   >
-                    <Icon name="close" />
+                    <Icon name="up" />
                   </button>
                   {this.props.children}
                 </div>

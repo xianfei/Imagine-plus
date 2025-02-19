@@ -199,8 +199,8 @@ class App {
       event.returnValue = store.set(key.key, key.value);
     });
 
-    ipcMain.on("exit", async (event, key: any) => {
-      BrowserWindow.fromWebContents(event.sender)?.destroy()
+    ipcMain.on("about", async (event, key: any) => {
+      this.menu.about()
     });
   }
 }

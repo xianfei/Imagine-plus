@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useCallback } from 'react'
 import { connect } from 'react-redux'
 import classnames from 'classnames'
@@ -51,9 +52,9 @@ function ActionBar({
   }, [onOptionsVisibleToggle])
 
   return (
-    <div className="action-bar" style={{ paddingLeft: navigator.platform.startsWith('Mac')?"78px":"0", paddingRight: navigator.platform.startsWith('Win')?"150px":"10px" }}>
-      
-      
+    <div className="action-bar" style={{ paddingLeft: navigator.platform.startsWith('Mac') ? "78px" : "0", paddingRight: navigator.platform.startsWith('Win') ? "150px" : "10px" }}>
+
+
       <button type="button" onClick={onAdd}>
         <Icon name="add" />
         <span className="ellipsis">{__('add')}</span>
@@ -118,7 +119,9 @@ function ActionBar({
         ) : null
       }
 
-<span className='title-app-name'>Imagine</span>
+      <span className='title-app-name'>Imagine</span>
+
+      {/* <span className='title-app-version' onClick={()=>imagineAPI.ipcSend('about', 1)}>v{pkg.version}</span> */}
 
       <div className="blank" />
 

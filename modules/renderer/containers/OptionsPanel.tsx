@@ -17,6 +17,7 @@ import __ from '../../locales'
 
 import './OptionsPanel.less'
 import { imagineAPI } from '../../bridge/web'
+import pkg from '../../../package.json'
 
 function storeset(key: string, value: any) {
   // @ts-ignore
@@ -184,6 +185,8 @@ class OptionsPanel extends PureComponent<IProps & IDispatchProps> {
             {__('apply_now')}
           </button>
           <div className="blank" />
+          <span className='title-app-version' onClick={()=>imagineAPI.ipcSend('about', 1)}>Imagine v{pkg.version}</span>
+
           <button type="button" onClick={onClose}>
             <Icon name="close" />
           </button>

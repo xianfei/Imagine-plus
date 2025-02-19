@@ -69,10 +69,6 @@ class Alone extends PureComponent<IAloneProps & IAloneDispatchProps, IAloneState
     if(task) {
       e.returnValue = false  
       onClose()
-    }else{
-      e.returnValue = true
-      // @ts-ignore
-      imagineAPI?.ipcSend('exit', 0)
     }
     
   }
