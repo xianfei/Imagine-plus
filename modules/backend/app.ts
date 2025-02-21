@@ -16,7 +16,7 @@ import { listenAsyncCall } from '../bridge/async-call/main'
 import optimize from './optimize'
 import { saveFiles, saveFile } from './save'
 import Menu from './menu'
-import store from './settingstore'
+import store from './configStore'
 
 
 class App {
@@ -201,6 +201,10 @@ class App {
 
     ipcMain.on("about", async (event, key: any) => {
       this.menu.about()
+    });
+
+    ipcMain.on("setProgressBar", async (event, value: number) => {
+      BrowserWindow.fromWebContents(event.sender)?.setProgressBar(value)
     });
   }
 }

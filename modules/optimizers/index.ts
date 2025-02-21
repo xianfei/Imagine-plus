@@ -3,7 +3,7 @@ import log from 'electron-log'
 // import * as bins from './bin'
 import { IOptimizeOptions } from '../common/types'
 const sharp = require("sharp");
-import store from '../backend/settingstore'
+import store from '../backend/configStore'
 
 // const createEnv = () => ({
 //   ...process.env,

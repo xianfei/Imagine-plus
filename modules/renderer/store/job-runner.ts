@@ -8,6 +8,7 @@ const maxRunningNum = Math.max((navigator.hardwareConcurrency || 2) - 1, 1)
 
 export default class JobRunner {
   private runningNum = 0
+  private maxTaskNum = 0
 
   private store?: Store<IState>
 
@@ -21,6 +22,26 @@ export default class JobRunner {
     store.subscribe(() => this.trigger())
   }
 
+  private setProgressBar() {
+    const { store } = this
+    if (!store) return
+
+    const state = store.getState()
+    const taskCount = state.tasks.filter((task) => (task.status === TaskStatus.PENDING || task.status === TaskStatus.PROCESSING)).length
+
+    if (taskCount === 0) {
+      this.maxTaskNum = 0
+      // @ts-ignore
+      imagineAPI?.ipcSend('setProgressBar', -1)
+    } else {
+      this.maxTaskNum = Math.max(this.maxTaskNum, taskCount)
+      const progress = 1 - taskCount / this.maxTaskNum
+      // @ts-ignore
+      imagineAPI?.ipcSend('setProgressBar', progress)
+    }
+
+  }
+
   private pickPendingTask() {
     const { store } = this
     if (!store) return null
@@ -32,6 +53,7 @@ export default class JobRunner {
     this.runningNum += 1
     const { store } = this
     if (!store) return
+    this.setProgressBar()
 
     // eslint-disable-next-line no-constant-condition
     while (true) {
@@ -47,6 +69,7 @@ export default class JobRunner {
         imagineAPI?.logger.error(err)
         store.dispatch(actions.taskOptimizeFail(task.id))
       }
+      this.setProgressBar()
     }
 
     this.runningNum -= 1

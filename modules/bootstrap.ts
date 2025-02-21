@@ -6,7 +6,7 @@ import updater from './backend/updater'
 import { IS_DEV } from './common/env'
 import { cleanTmpdir } from './common/file-utils'
 import { setup as setupLocales } from './locales'
-import store from './backend/settingstore'
+import store from './backend/configStore'
 
 cleanTmpdir()
 
