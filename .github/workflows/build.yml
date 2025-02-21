@@ -50,7 +50,7 @@ jobs:
       
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.os }}-build
+          name: ${{ matrix.os }}-${{ matrix.buildarch }}-CI_Build
           path: |
             dist/Imagine-*.dmg
             dist/Imagine-*.exe
