@@ -19,8 +19,8 @@
     "pack": "npm run build && electron-builder --dir",
     "release": "npm run build && electron-builder --publish always",
     "test": "tsc && npm run lint && jest",
-    "buildmacarm": "npm run build && npm uninstall sharp && npm install --cpu=arm64 --os=darwin sharp",
-    "buildmacx64": "npm run build && npm uninstall sharp && npm install --cpu=x64 --os=darwin sharp"
+    "buildarm": "npm run build && npm uninstall sharp && npm install --cpu=arm64 sharp",
+    "buildx64": "npm run build && npm uninstall sharp && npm install --cpu=x64 sharp"
   },
   "author": "meowtec<bertonzh@gmail.com> & xianfei<xianfei@bupt.cn>",
   "license": "ISC",
@@ -59,6 +59,7 @@
     "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-plugin-unicorn": "^41.0.0",
     "jest": "^27.5.1",
+    "jimp": "^0.16.1",
     "less": "^4.1.1",
     "less-loader": "^10.2.0",
     "pixelmatch": "^5.2.1",
@@ -91,7 +92,6 @@
     "file-type": "^16.5.3",
     "fs-extra": "^10.0.0",
     "heic-convert": "^2.1.0",
-    "jimp": "^0.16.1",
     "lodash": "^4.17.21",
     "raw-body": "^2.4.1",
     "sharp": "^0.33.5",
@@ -113,23 +113,19 @@
     },
     "mac": {
       "category": "public.app-category.graphics-design",
+      "artifactName": "${productName}-${version}-macOS-${arch}.${ext}",
       "target": {
         "target": "dmg"
       }
     },
     "win": {
+      "artifactName": "${productName}-${version}-Windows-${arch}-portable.${ext}",
       "target": [
         {
-          "target": "nsis",
-          "arch": [
-            "x64"
-          ]
+          "target": "nsis"
         },
         {
-          "target": "portable",
-          "arch": [
-            "x64"
-          ]
+          "target": "portable"
         }
       ]
     },
@@ -138,18 +134,17 @@
       "publish": [
         "github"
       ],
+      "artifactName": "${productName}-${version}-Linux-${arch}-appimage.${ext}",
       "target": [
         {
-          "target": "appimage",
-          "arch": [
-            "x64"
-          ]
+          "target": "appimage"
         }
       ]
     },
     "nsis": {
       "perMachine": true,
-      "allowElevation": false
+      "allowElevation": false,
+      "artifactName": "${productName}-${version}-Windows-${arch}-installer.${ext}"
     },
     "fileAssociations": [
       {

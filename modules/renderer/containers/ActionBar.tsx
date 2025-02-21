@@ -78,7 +78,7 @@ function ActionBar({
       >
         <button type="button" disabled={!count} className="expand-button">
           <div>
-            <Icon name="down" />
+            <Icon name="save" />
             <span className="ellipsis">{__('save')}</span>
           </div>
           <Icon name="expand-more" className="expand" />

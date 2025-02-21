@@ -1,9 +1,6 @@
 name: Build/release
 
-on:
-  push:
-    tags:
-      - 'v*.*.*'
+on: [push, pull_request]
 
 jobs:
   release:
@@ -25,24 +22,12 @@ jobs:
 
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1
-        if: (matrix.os == 'windows-latest' || matrix.os == 'ubuntu-latest') && matrix.buildarch == 'x64'
+        if: matrix.buildarch == 'x64'
         with:
           # GitHub token, automatically provided to the action
           # (No need to define this secret in the repo settings)
           github_token: ${{ secrets.SECRET_TOKEN }}
-
-          # If the commit is tagged with a version (e.g. "v1.0.0"),
-          # release the app after building
-          release: ${{ startsWith(github.ref, 'refs/releases/') }}
-
-      - name: Build/release Electron app
-        uses: samuelmeuli/action-electron-builder@v1
-        if: matrix.os == 'macos-latest' && matrix.buildarch == 'x64'
-        with:
-          # GitHub token, automatically provided to the action
-          # (No need to define this secret in the repo settings)
-          github_token: ${{ secrets.SECRET_TOKEN }}
-          build_script_name: buildmacx64
+          build_script_name: buildx64
           args: --x64
 
           # If the commit is tagged with a version (e.g. "v1.0.0"),
@@ -51,12 +36,12 @@ jobs:
 
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1
-        if: matrix.os == 'macos-latest' && matrix.buildarch == 'arm64'
+        if: matrix.buildarch == 'arm64'
         with:
           # GitHub token, automatically provided to the action
           # (No need to define this secret in the repo settings)
           github_token: ${{ secrets.SECRET_TOKEN }}
-          build_script_name: buildmacarm
+          build_script_name: buildarm
           args: --arm64
 
           # If the commit is tagged with a version (e.g. "v1.0.0"),
