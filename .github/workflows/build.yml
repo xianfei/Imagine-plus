@@ -47,3 +47,11 @@ jobs:
           # If the commit is tagged with a version (e.g. "v1.0.0"),
           # release the app after building
           release: ${{ startsWith(github.ref, 'refs/releases/') }}
+      
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.os }}-build
+          path: |
+            dist/Imagine-*.dmg
+            dist/Imagine-*.exe
+            dist/Imagine-*.AppImage
