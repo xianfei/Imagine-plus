@@ -1,7 +1,7 @@
 {
   "name": "Imagine",
   "private": true,
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "PNG/JPEG optimization app",
   "homepage": "https://github.com/xianfei/Imagine-plus",
   "repository": {
@@ -20,6 +20,7 @@
     "release": "npm run build && electron-builder --publish always",
     "test": "tsc && npm run lint && jest",
     "buildarm": "npm run build && npm uninstall sharp && npm install --cpu=arm64 sharp",
+    "buildarmwin": "npm run build && npm uninstall sharp && npm install --cpu=wasm32 sharp",
     "buildx64": "npm run build && npm uninstall sharp && npm install --cpu=x64 sharp"
   },
   "author": "meowtec<bertonzh@gmail.com> & xianfei<xianfei@bupt.cn>",
@@ -104,8 +105,8 @@
       "dist/web"
     ],
     "asarUnpack": [
-      "**/node_modules/@img/sharp-${platform}-${arch}",
-      "**/node_modules/@img/sharp-libvips-${platform}-${arch}"
+      "**/node_modules/sharp/**/*",
+      "**/node_modules/@img/**/*"
     ],
     "appId": "com.meowtec.imagine.app",
     "dmg": {

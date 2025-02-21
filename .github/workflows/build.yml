@@ -36,12 +36,26 @@ jobs:
 
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1
-        if: matrix.buildarch == 'arm64'
+        if: matrix.buildarch == 'arm64' && matrix.os != 'windows-latest'
         with:
           # GitHub token, automatically provided to the action
           # (No need to define this secret in the repo settings)
           github_token: ${{ secrets.SECRET_TOKEN }}
           build_script_name: buildarm
+          args: --arm64
+
+          # If the commit is tagged with a version (e.g. "v1.0.0"),
+          # release the app after building
+          release: ${{ startsWith(github.ref, 'refs/releases/') }}
+      
+      - name: Build/release Electron app
+        uses: samuelmeuli/action-electron-builder@v1
+        if: matrix.buildarch == 'arm64' && matrix.os == 'windows-latest'
+        with:
+          # GitHub token, automatically provided to the action
+          # (No need to define this secret in the repo settings)
+          github_token: ${{ secrets.SECRET_TOKEN }}
+          build_script_name: buildarmwin
           args: --arm64
 
           # If the commit is tagged with a version (e.g. "v1.0.0"),
