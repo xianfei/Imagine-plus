@@ -3,6 +3,7 @@ import log from 'electron-log'
 // import * as bins from './bin'
 import { IOptimizeOptions } from '../common/types'
 const sharp = require("sharp");
+const bmp = require("sharp-bmp");
 import store from '../backend/configStore'
 
 // const createEnv = () => ({
@@ -50,7 +51,7 @@ export const mozjpeg: IOptimizeMethod = (
 
   log.info('Converting to jpeg with quality', quality)
 
-  const pipeline = sharp(input).jpeg({ quality, mozjpeg: true , progressive: store.get("progressive", true)})
+  const pipeline = (input.endsWith('.bmp')?bmp.sharpFromBmp(input):sharp(input)).jpeg({ quality, mozjpeg: true , progressive: store.get("progressive", true)})
 
   if(store.get("keepmeta", true)) pipeline.keepMetadata();
 
@@ -68,7 +69,7 @@ export const pngquant: IOptimizeMethod = (
 
   log.info('Converting to jpeg with colors', color)
 
-  const pipeline = sharp(input).png({ colors:color , progressive: store.get("progressive", true) })
+  const pipeline = (input.endsWith('.bmp')?bmp.sharpFromBmp(input):sharp(input)).png({ colors:color , progressive: store.get("progressive", true) })
 
   if(store.get("keepmeta", true)) pipeline.keepMetadata();
 
@@ -135,7 +136,7 @@ export const cwebp: IOptimizeMethod = (
 
   log.info('Converting to webp with quality', quality)
 
-  const pipeline = sharp(input).webp({ quality })
+  const pipeline = (input.endsWith('.bmp')?bmp.sharpFromBmp(input):sharp(input)).webp({ quality })
 
   if(store.get("keepmeta", true)) pipeline.keepMetadata();
 
@@ -153,7 +154,7 @@ export const cavif: IOptimizeMethod = (
 
   log.info('Converting to AVIF with quality', quality)
 
-  const pipeline = sharp(input).avif({ quality })
+  const pipeline = (input.endsWith('.bmp')?bmp.sharpFromBmp(input):sharp(input)).avif({ quality })
 
   if(store.get("keepmeta", true)) pipeline.keepMetadata();
 

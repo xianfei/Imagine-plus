@@ -29,7 +29,7 @@ const optimize = async (
     originalName: image.originalName,
   }
 
-  if (exportExt === SupportedExt.heic) {
+  if (exportExt === SupportedExt.heic || exportExt === SupportedExt.bmp) {
     exportExt = SupportedExt.jpg
   }
 

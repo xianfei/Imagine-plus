@@ -52,6 +52,13 @@ export const createOptimizeOptions = (ext: SupportedExt) => {
       })
       break
 
+      case SupportedExt.bmp:
+        Object.assign(optimizeOptions, {
+          exportExt: SupportedExt.jpg,
+          quality: 80,
+        })
+        break
+
     default:
   }
 
@@ -239,6 +246,7 @@ export default handleActions<IState, any>({
       webp: createOptimizeOptions(SupportedExt.webp),
       avif: createOptimizeOptions(SupportedExt.avif),
       heic: createOptimizeOptions(SupportedExt.heic),
+      bmp: createOptimizeOptions(SupportedExt.bmp),
     },
     ...savedOptions,
   },

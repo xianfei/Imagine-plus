@@ -105,7 +105,9 @@ class App {
       e.preventDefault()
     })
 
-    if (process.env.IMAGINE_ENV === 'development' || process.execArgv.includes('--inspect')) {
+    if (process.env.IMAGINE_ENV === 'development' || 
+        process.execArgv.includes('--inspect') || 
+        process.argv.includes('--inspect')) {
       win.webContents.openDevTools()
     }
 

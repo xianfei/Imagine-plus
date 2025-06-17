@@ -9,6 +9,7 @@ export enum SupportedExt {
   webp = 'webp',
   avif = 'avif',
   heic = 'heic',
+  bmp = 'bmp',
 }
 
 export const SupportedExtAlias: Record<string, SupportedExt> = {
@@ -97,6 +98,7 @@ export interface IDefaultOptions {
   webp: IOptimizeOptions
   avif: IOptimizeOptions
   heic: IOptimizeOptions
+  bmp: IOptimizeOptions
 }
 
 export interface IGlobals {

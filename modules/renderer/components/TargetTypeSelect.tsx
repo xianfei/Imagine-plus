@@ -26,6 +26,10 @@ class TargetTypeSelect extends PureComponent<ITargetTypeSelectProps, Empty> {
       targetExt = SupportedExt.jpg
     }
 
+    if(targetExt === SupportedExt.bmp) {
+      targetExt = SupportedExt.jpg
+    }
+
 
     return (
       <Select

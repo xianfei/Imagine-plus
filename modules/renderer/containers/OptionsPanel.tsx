@@ -58,6 +58,7 @@ class OptionsPanel extends PureComponent<IProps & IDispatchProps> {
       webp: createOptionsChangeHandler(SupportedExt.webp),
       avif: createOptionsChangeHandler(SupportedExt.avif),
       heic: createOptionsChangeHandler(SupportedExt.heic),
+      bmp: createOptionsChangeHandler(SupportedExt.bmp),
     }
   })()
 
@@ -76,6 +77,7 @@ class OptionsPanel extends PureComponent<IProps & IDispatchProps> {
       webp: createExtChangeHandler(SupportedExt.webp),
       avif: createExtChangeHandler(SupportedExt.avif),
       heic: createExtChangeHandler(SupportedExt.jpg),
+      bmp: createExtChangeHandler(SupportedExt.jpg),
     }
   })()
 
