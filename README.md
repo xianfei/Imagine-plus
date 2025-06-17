@@ -12,12 +12,12 @@ What's changed in this fork:
 
 Supported formats:
 
-|  | from JPG | from PNG | from WebP | from AVIF | from HEIC |
-| --- | --- | --- | --- | --- | --- |
-| to JPG | ✅ | ✅ | ✅ | ✅ | ✅ |
-| to PNG | ✅ | ✅ | ✅ | ✅ | ✅ |
-| to WebP | ✅ | ✅ | ✅ | ✅ | ✅ |
-| to AVIF | ✅ | ✅ | ✅ | ✅ | ✅ |
+|  | from JPG | from PNG | from WebP | from AVIF | from HEIC | from BMP |
+| --- | --- | --- | --- | --- | --- | --- |
+| to JPG | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| to PNG | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| to WebP | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| to AVIF | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 # Imagine
 
