@@ -51,6 +51,8 @@ export default class ImageViewer extends PureComponent<ImageViewerProps, ImageVi
 
   private backdrop: HTMLDivElement | null = null
 
+  private imageCompare: any | null = null
+
   private prevScreenX = 0
 
   private prevScreenY = 0
@@ -225,10 +227,11 @@ export default class ImageViewer extends PureComponent<ImageViewerProps, ImageVi
       return (
         <div
           style={{
-            transform: `translate(${x}px, ${y}px) scale(${zoom})`,
+            transform: `translate(${x}px, ${y}px) scale(${zoom * (this.image?.naturalHeight || window.innerHeight) / window.innerHeight})`,
           }}
         >
           <ReactCompareSlider
+            ref={(el) => { this.imageCompare = el }}
             itemOne={
               <ReactCompareSliderImage 
                 src={beforeSrc} 
@@ -246,7 +249,18 @@ export default class ImageViewer extends PureComponent<ImageViewerProps, ImageVi
             onlyHandleDraggable={true}
             style={{ width: '100%', height: '100%' }}
           />
+          <img
+          className="image -transition"
+          src={src}
+          onLoad={this.handleImageLoad}
+          onError={this.handleImageError}
+          ref={(el) => { this.image = el }}
+          style={{
+            display: 'none'
+          }}
+        />
         </div>
+        
       )
     }
 
