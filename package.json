@@ -1,7 +1,7 @@
 {
   "name": "ImaginePlus",
   "private": true,
-  "version": "0.8.4",
+  "version": "0.8.5",
   "description": "PNG/JPEG optimization app",
   "homepage": "https://github.com/xianfei/Imagine-plus",
   "repository": {
