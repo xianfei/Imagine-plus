@@ -1,6 +1,9 @@
 name: Build/release
 
-on: [push, pull_request]
+on:
+  push:
+    tags:
+      - 'v*.*.*'
 
 jobs:
   release:
@@ -66,6 +69,6 @@ jobs:
         with:
           name: ${{ matrix.os }}-${{ matrix.buildarch }}-CI_Build
           path: |
-            dist/Imagine-*.dmg
-            dist/Imagine-*.exe
-            dist/Imagine-*.AppImage
+            dist/Imagine*.dmg
+            dist/Imagine*.exe
+            dist/Imagine*.AppImage
