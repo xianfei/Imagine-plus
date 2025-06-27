@@ -1,6 +1,7 @@
 # Imagine Plus
 
-![Screenshot](https://github.com/user-attachments/assets/17e78f90-15ca-44c0-b689-fd2d0ab9c6c7)
+![Screenshot](https://github.com/user-attachments/assets/a0ad2640-41bc-48e1-8f7e-95c95886c2b7)
+
 
 What's changed in this fork:
 
@@ -9,6 +10,7 @@ What's changed in this fork:
 - Added support for HEIC Decode
 - Added support for WebP Encode/Decode
 - Added support for AVIF Encode/Decode
+- Compare Mode
 
 Supported formats:
 
