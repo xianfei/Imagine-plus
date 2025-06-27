@@ -10,7 +10,7 @@ What's changed in this fork:
 - Added support for HEIC Decode
 - Added support for WebP Encode/Decode
 - Added support for AVIF Encode/Decode
-- Compare Mode
+- Comparison mode
 
 Supported formats:
 
