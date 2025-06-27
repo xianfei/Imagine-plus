@@ -119,12 +119,7 @@ export default handleActions<IState, any>({
       ...action.payload
         .filter((image) => !tasks.some((task) => task.id === image.id))
         .map<ITaskItem>((image) => {
-        const exportExt = (
-          (
-            defaultOptions[image.ext]
-            && defaultOptions[image.ext].exportExt
-          ) || image.ext
-        )
+        const exportExt = defaultOptions[image.ext]?.exportExt || image.ext
 
         return {
           id: image.id,
@@ -193,10 +188,11 @@ export default handleActions<IState, any>({
     const { defaultOptions } = state.globals
 
     return updateTaskList(state, (list) => list.map((item) => {
-      const { exportExt } = defaultOptions[item.image.ext]
+      const extOptions = defaultOptions[item.image.ext]
+      const exportExt = extOptions?.exportExt ?? item.image.ext
       return {
         ...item,
-        options: getInitialTaskOptions(exportExt ?? item.image.ext, defaultOptions),
+        options: getInitialTaskOptions(exportExt, defaultOptions),
         status: TaskStatus.PENDING,
       }
     }))
@@ -247,7 +243,8 @@ export default handleActions<IState, any>({
       avif: createOptimizeOptions(SupportedExt.avif),
       heic: createOptimizeOptions(SupportedExt.heic),
       bmp: createOptimizeOptions(SupportedExt.bmp),
+      ...(savedOptions?.defaultOptions || {}),
     },
-    ...savedOptions,
+    ...(savedOptions ? { ...savedOptions, defaultOptions: undefined } : {}),
   },
 }) as Reducer<IState, any>
