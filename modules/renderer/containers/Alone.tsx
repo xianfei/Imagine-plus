@@ -36,9 +36,10 @@ interface IAloneDispatchProps {
 const enum ImageStage {
   beforeOptimized = 'before_optimized',
   afterOptimized = 'after_optimized',
+  compare = 'compare',
 }
 
-const imageStageList = [ImageStage.beforeOptimized, ImageStage.afterOptimized]
+const imageStageList = [ImageStage.beforeOptimized, ImageStage.afterOptimized, ImageStage.compare]
 
 interface IAloneState {
   imageStage: ImageStage,
@@ -163,7 +164,12 @@ class Alone extends PureComponent<IAloneProps & IAloneDispatchProps, IAloneState
 
     return (
       <Modal className="alone-modal" visible={!!task} onClose={onClose}>
-        <ImageViewer src={image && image.url} />
+        <ImageViewer 
+          src={image && image.url}
+          beforeSrc={task?.image.url}
+          afterSrc={task?.optimized?.url}
+          compareMode={imageStage === ImageStage.compare}
+        />
         {
           task && this.renderControllers()
         }

@@ -5,6 +5,7 @@ import { getWheelFromEvent, eventOffset } from '../utils/dom-event'
 import { coop } from '../../common/utils'
 import RadioGroup from './RadioGroup'
 import Icon from './Icon'
+import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider'
 
 import './ImageViewer.less'
 
@@ -12,6 +13,9 @@ interface ImageViewerProps {
   src?: string
   width?: number
   height?: number
+  beforeSrc?: string
+  afterSrc?: string
+  compareMode?: boolean
 }
 
 interface ImageViewerState {
@@ -211,16 +215,47 @@ export default class ImageViewer extends PureComponent<ImageViewerProps, ImageVi
       imageError,
     } = this.state
 
+    const { compareMode, beforeSrc, afterSrc, src } = this.props
+
     if (imageError) {
       return <div className="image-fail">FAILED</div>
     }
 
-    if (this.props.src) {
+    if (compareMode && beforeSrc && afterSrc) {
+      return (
+        <div
+          style={{
+            transform: `translate(${x}px, ${y}px) scale(${zoom})`,
+          }}
+        >
+          <ReactCompareSlider
+            itemOne={
+              <ReactCompareSliderImage 
+                src={beforeSrc} 
+                alt="Before optimization"
+                style={{ objectFit: 'contain' }}
+              />
+            }
+            itemTwo={
+              <ReactCompareSliderImage 
+                src={afterSrc} 
+                alt="After optimization"
+                style={{ objectFit: 'contain' }}
+              />
+            }
+            onlyHandleDraggable={true}
+            style={{ width: '100%', height: '100%' }}
+          />
+        </div>
+      )
+    }
+
+    if (src) {
       return (
         // eslint-disable-next-line jsx-a11y/alt-text
         <img
           className="image -transition"
-          src={this.props.src}
+          src={src}
           onLoad={this.handleImageLoad}
           onError={this.handleImageError}
           ref={(el) => { this.image = el }}

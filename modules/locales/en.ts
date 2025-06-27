@@ -19,6 +19,7 @@ export default {
   ok: 'OK',
   before_optimized: 'Before',
   after_optimized: 'After',
+  compare: 'Compare',
   new_version: 'Upgrade',
   apply_now: 'Apply now',
 }
