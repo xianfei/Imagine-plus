@@ -7,12 +7,8 @@ What's changed in this fork:
 
 - UI improvements
 - More features (keep metadata, progressive encode, etc.)
-- Added support for HEIC Decode
-- Added support for WebP Encode/Decode
-- Added support for AVIF Encode/Decode
 - Comparison mode
-
-Supported formats:
+- Support more formats (see the table below)
 
 |  | from JPG | from PNG | from WebP | from AVIF | from HEIC | from BMP |
 | --- | --- | --- | --- | --- | --- | --- |
