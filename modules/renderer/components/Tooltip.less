@@ -1,0 +1,60 @@
+.tooltip {
+  .tooltip-content {
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    max-width: 200px;
+    text-align: center;
+  }
+
+  > .arrow {
+    border-bottom-color: rgba(0, 0, 0, 0.8) !important;
+  }
+
+  &[x-placement="top"] {
+    margin-bottom: 8px;
+    margin-top: 0;
+
+    > .arrow {
+      border-top-color: rgba(0, 0, 0, 0.8) !important;
+      border-bottom-color: transparent !important;
+      bottom: -10px;
+      top: auto;
+    }
+  }
+
+  &[x-placement="bottom"] {
+    > .arrow {
+      border-bottom-color: rgba(0, 0, 0, 0.8) !important;
+    }
+  }
+
+  &[x-placement="left"] {
+    margin-right: 8px;
+    margin-top: 0;
+
+    > .arrow {
+      border-left-color: rgba(0, 0, 0, 0.8) !important;
+      border-bottom-color: transparent !important;
+      right: -10px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+
+  &[x-placement="right"] {
+    margin-left: 8px;
+    margin-top: 0;
+
+    > .arrow {
+      border-right-color: rgba(0, 0, 0, 0.8) !important;
+      border-bottom-color: transparent !important;
+      left: -10px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+}

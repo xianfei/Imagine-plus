@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import classnames from 'classnames'
 import Icon from '../components/Icon'
 import Popper from '../components/Popper'
+import Tooltip from '../components/Tooltip'
 import OptionsPanel from './OptionsPanel'
 import actions from '../store/actionCreaters'
 import { SaveType, IUpdateInfo, IState } from '../../common/types'
@@ -55,10 +56,11 @@ function ActionBar({
     <div className="action-bar" style={{ paddingLeft: navigator.platform.startsWith('Mac') ? "78px" : "0", paddingRight: navigator.platform.startsWith('Win') ? "150px" : "10px" }}>
 
 
-      <button type="button" onClick={onAdd}>
-        <Icon name="add" />
-        <span className="ellipsis">{__('add')}</span>
-      </button>
+      <Tooltip title={__('add')} placement="bottom">
+        <button type="button" onClick={onAdd}>
+          <Icon name="add" />
+        </button>
+      </Tooltip>
 
       <Popper
         hoverMode
@@ -76,13 +78,18 @@ function ActionBar({
           </div>
         )}
       >
-        <button type="button" disabled={!count} className="expand-button">
-          <div>
-            <Icon name="save" />
-            <span className="ellipsis">{__('save')}</span>
-          </div>
-          <Icon name="expand-more" className="expand" />
-        </button>
+        <Tooltip title={__('save')} placement="bottom">
+          <button 
+            type="button" 
+            disabled={!count} 
+            className="expand-button"
+          >
+            <div>
+              <Icon name="save" />
+            </div>
+            <Icon name="expand-more" className="expand" />
+          </button>
+        </Tooltip>
       </Popper>
 
       <Popper
@@ -101,21 +108,27 @@ function ActionBar({
           </div>
         )}
       >
-        <button type="button" disabled={!count} className="expand-button">
-          <div>
-            <Icon name="delete" />
-            <span className="ellipsis">{__('clear')}</span>
-          </div>
-          <Icon name="expand-more" className="expand" />
-          {sizeIncreaseCount ? <i className="dot" /> : null}
-        </button>
+        <Tooltip title={__('clear')} placement="bottom">
+          <button 
+            type="button" 
+            disabled={!count} 
+            className="expand-button"
+          >
+            <div>
+              <Icon name="delete" />
+            </div>
+            <Icon name="expand-more" className="expand" />
+            {sizeIncreaseCount ? <i className="dot" /> : null}
+          </button>
+        </Tooltip>
       </Popper>
       {
         updateInfo ? (
-          <button type="button" onClick={onUpdateClick} className="has-update">
-            <Icon name="up" />
-            <span className="ellipsis">{__('new_version')}</span>
-          </button>
+          <Tooltip title={__('new_version')} placement="bottom">
+            <button type="button" onClick={onUpdateClick} className="has-update">
+              <Icon name="up" />
+            </button>
+          </Tooltip>
         ) : null
       }
 
@@ -132,15 +145,17 @@ function ActionBar({
           <OptionsPanel onApplyClick={handleOptionsHide} />
         )}
       >
-        <button
-          type="button"
-          className={classnames({
-            '-active': optionsVisible,
-          })}
-          onClick={handleOptionsVisibleClick}
-        >
-          <Icon name="tune" />
-        </button>
+        <Tooltip title="Settings" placement="bottom">
+          <button
+            type="button"
+            className={classnames({
+              '-active': optionsVisible,
+            })}
+            onClick={handleOptionsVisibleClick}
+          >
+            <Icon name="tune" />
+          </button>
+        </Tooltip>
       </Popper>
     </div>
   )
