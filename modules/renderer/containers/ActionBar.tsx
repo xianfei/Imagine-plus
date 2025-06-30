@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useCallback } from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
 import { connect } from 'react-redux'
 import classnames from 'classnames'
 import Icon from '../components/Icon'
@@ -44,6 +44,9 @@ function ActionBar({
   onUpdateClick,
   onOptionsVisibleToggle,
 }: IActionBarStateProps & IActionBarDispatchProps) {
+  const [savePopperVisible, setSavePopperVisible] = useState(false)
+  const [clearPopperVisible, setClearPopperVisible] = useState(false)
+
   const handleOptionsVisibleClick = () => {
     onOptionsVisibleToggle(!optionsVisible)
   }
@@ -51,6 +54,53 @@ function ActionBar({
   const handleOptionsHide = useCallback(() => {
     onOptionsVisibleToggle(false)
   }, [onOptionsVisibleToggle])
+
+  const handleSaveButtonClick = () => {
+    setSavePopperVisible(!savePopperVisible)
+    setClearPopperVisible(false)
+  }
+
+  const handleClearButtonClick = () => {
+    setClearPopperVisible(!clearPopperVisible)
+    setSavePopperVisible(false)
+  }
+
+  const handleSavePopperHide = () => {
+    setSavePopperVisible(false)
+  }
+
+  const handleClearPopperHide = () => {
+    setClearPopperVisible(false)
+  }
+
+  const handleSaveAction = (type: SaveType) => {
+    onSave(type)
+    setSavePopperVisible(false)
+  }
+
+  const handleClearAction = (action: () => void) => {
+    action()
+    setClearPopperVisible(false)
+  }
+
+  // 点击外部关闭弹出菜单
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement
+      if (!target.closest('.popper') && !target.closest('.expand-button')) {
+        setSavePopperVisible(false)
+        setClearPopperVisible(false)
+      }
+    }
+
+    if (savePopperVisible || clearPopperVisible) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [savePopperVisible, clearPopperVisible])
 
   return (
     <div className="action-bar" style={{ paddingLeft: navigator.platform.startsWith('Mac') ? "78px" : "0", paddingRight: navigator.platform.startsWith('Win') ? "150px" : "10px" }}>
@@ -63,43 +113,44 @@ function ActionBar({
       </Tooltip>
 
       <Popper
-        hoverMode
+        visible={savePopperVisible}
+        className='actionbar-popper'
         popper={(
           <div className="popper-menu">
-            <button type="button" onClick={() => onSave(SaveType.OVER)}>
+            <button type="button" onClick={() => handleSaveAction(SaveType.OVER)}>
               {__('save_cover')}
             </button>
-            <button type="button" onClick={() => onSave(SaveType.NEW_NAME)}>
+            <button type="button" onClick={() => handleSaveAction(SaveType.NEW_NAME)}>
               {__('save_new')}
             </button>
-            <button type="button" onClick={() => onSave(SaveType.NEW_DIR)}>
+            <button type="button" onClick={() => handleSaveAction(SaveType.NEW_DIR)}>
               {__('save_dir')}
             </button>
           </div>
         )}
       >
         <Tooltip title={__('save')} placement="bottom">
-          <button 
-            type="button" 
-            disabled={!count} 
-            className="expand-button"
+          <button
+            type="button"
+            disabled={!count}
+            onClick={handleSaveButtonClick}
           >
             <div>
               <Icon name="save" />
             </div>
-            <Icon name="expand-more" className="expand" />
           </button>
         </Tooltip>
       </Popper>
 
       <Popper
-        hoverMode
+        visible={clearPopperVisible}
+        className='actionbar-popper'
         popper={(
           <div className="popper-menu">
-            <button type="button" onClick={onRemoveAll}>
+            <button type="button" onClick={() => handleClearAction(onRemoveAll)}>
               {__('clear')}
             </button>
-            <button type="button" onClick={onRemoveIncreased} disabled={!sizeIncreaseCount}>
+            <button type="button" onClick={() => handleClearAction(onRemoveIncreased)} disabled={!sizeIncreaseCount}>
               {__('clear_increased')}
               {' ('}
               {sizeIncreaseCount}
@@ -109,15 +160,14 @@ function ActionBar({
         )}
       >
         <Tooltip title={__('clear')} placement="bottom">
-          <button 
-            type="button" 
-            disabled={!count} 
-            className="expand-button"
+          <button
+            type="button"
+            disabled={!count}
+            onClick={handleClearButtonClick}
           >
             <div>
               <Icon name="delete" />
             </div>
-            <Icon name="expand-more" className="expand" />
             {sizeIncreaseCount ? <i className="dot" /> : null}
           </button>
         </Tooltip>
@@ -139,7 +189,7 @@ function ActionBar({
       <div className="blank" />
 
       <Popper
-        className="options-popper"
+        className="options-popper actionbar-popper"
         visible={optionsVisible}
         popper={(
           <OptionsPanel onApplyClick={handleOptionsHide} />
