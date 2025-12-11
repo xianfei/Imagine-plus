@@ -17,8 +17,9 @@ export default {
   quality: 'Qualité',
   visit: 'Voir le site internet',
   ok: 'OK',
-  before_optimized: 'original',
-  after_optimized: 'optimisé',
+  before_optimized: 'Original',
+  after_optimized: 'Optimisé',
+  compare: 'Comparaison',
   new_version: 'Mettre à jour',
   apply_now: 'Appliquer maintenant',
 }
