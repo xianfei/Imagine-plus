@@ -1,164 +1,47 @@
-import { spawn } from 'child-process-promise'
 import log from 'electron-log'
-// import * as bins from './bin'
 import { IOptimizeOptions } from '../common/types'
-const sharp = require("sharp");
-const bmp = require("sharp-bmp");
-import store from '../backend/configStore'
 
-// const createEnv = () => ({
-//   ...process.env,
-//   LD_LIBRARY_PATH: bins.basePath,
-// } as NodeJS.ProcessEnv)
+const sharp = require('sharp')
+const bmp = require('sharp-bmp')
 
 export type IOptimizeMethod = (
   input: string,
   output: string,
   options: IOptimizeOptions,
-) => Promise<{ stdout: string; stderr: string }>
+) => Promise<void>
 
-// export const mozjpeg: IOptimizeMethod = (
-//   input,
-//   output,
-//   options,
-// ) => {
-//   const { quality = 70 } = options
-
-//   const spawnArgs = [
-//     '-quality',
-//     quality.toString(),
-//     '-outfile',
-//     output,
-//     input,
-//   ]
-
-//   log.info('spawn', bins.mozjpeg, spawnArgs)
-
-//   return spawn(bins.mozjpeg, spawnArgs, {
-//     capture: ['stdout', 'stderr'],
-//     env: createEnv(),
-//   }).catch((e) => {
-//     throw new Error(`${e.message}\n${e.stderr}`)
-//   })
-// }
-
-export const mozjpeg: IOptimizeMethod = (
-  input,
-  output,
-  options,
-) => {
-  const { quality = 70 } = options
-
-  log.info('Converting to jpeg with quality', quality)
-
-  const pipeline = (input.endsWith('.bmp')?bmp.sharpFromBmp(input):sharp(input)).jpeg({ quality, mozjpeg: true , progressive: store.get("progressive", true)})
-
-  if(store.get("keepmeta", true)) pipeline.keepMetadata();
-
-  return (pipeline.toFile(output)).catch((e:{message:any}) => {
-      throw new Error(`${e.message}`)
-    })
+function openImage(input: string) {
+  return input.endsWith('.bmp') ? bmp.sharpFromBmp(input) : sharp(input)
 }
 
-export const pngquant: IOptimizeMethod = (
-  input,
-  output,
-  options,
-) => {
-  const { color = 256 } = options
-
-  log.info('Converting to jpeg with colors', color)
-
-  const pipeline = (input.endsWith('.bmp')?bmp.sharpFromBmp(input):sharp(input)).png({ colors:color , progressive: store.get("progressive", true) })
-
-  if(store.get("keepmeta", true)) pipeline.keepMetadata();
-
-  return (pipeline.toFile(output)).catch((e:{message:any}) => {
-      throw new Error(`${e.message}`)
-    })
+export const toJpeg: IOptimizeMethod = (input, output, options) => {
+  const { quality = 70, keepMetadata = true, progressive = true } = options
+  log.info('toJpeg quality=%d', quality)
+  const pipeline = openImage(input).jpeg({ quality, mozjpeg: true, progressive })
+  if (keepMetadata) pipeline.keepMetadata()
+  return pipeline.toFile(output).catch((e: { message: any }) => { throw new Error(e.message) })
 }
 
-// export const pngquant: IOptimizeMethod = (
-//   input,
-//   output,
-//   options,
-// ) => {
-//   const { color = 256 } = options
-
-//   const spawnArgs = [
-//     color.toString(),
-//     input,
-//     '-o',
-//     output,
-//   ]
-
-//   log.info('spawn', bins.pngquant, spawnArgs)
-
-//   return spawn(bins.pngquant, spawnArgs, {
-//     capture: ['stdout', 'stderr'],
-//     env: createEnv(),
-//   }).catch((e) => {
-//     throw new Error(`${e.message}\n${e.stderr}`)
-//   })
-// }
-
-// export const cwebp: IOptimizeMethod = (
-//   input,
-//   output,
-//   options,
-// ) => {
-//   const { quality = 80 } = options
-
-//   const spawnArgs = [
-//     '-q',
-//     quality.toString(),
-//     input,
-//     '-o',
-//     output,
-//   ]
-
-//   log.info('spawn', bins.cwebp, spawnArgs)
-
-//   return spawn(bins.cwebp, spawnArgs, {
-//     capture: ['stdout', 'stderr'],
-//     env: createEnv(),
-//   }).catch((e) => {
-//     throw new Error(`${e.message}\n${e.stderr}`)
-//   })
-// }
-
-export const cwebp: IOptimizeMethod = (
-  input,
-  output,
-  options,
-) => {
-  const { quality = 80 } = options
-
-  log.info('Converting to webp with quality', quality)
-
-  const pipeline = (input.endsWith('.bmp')?bmp.sharpFromBmp(input):sharp(input)).webp({ quality })
-
-  if(store.get("keepmeta", true)) pipeline.keepMetadata();
-
-  return (pipeline.toFile(output)).catch((e:{message:any}) => {
-      throw new Error(`${e.message}`)
-    })
+export const toPng: IOptimizeMethod = (input, output, options) => {
+  const { color = 256, keepMetadata = true, progressive = true } = options
+  log.info('toPng colors=%d', color)
+  const pipeline = openImage(input).png({ colors: color, progressive })
+  if (keepMetadata) pipeline.keepMetadata()
+  return pipeline.toFile(output).catch((e: { message: any }) => { throw new Error(e.message) })
 }
 
-export const cavif: IOptimizeMethod = (
-  input,
-  output,
-  options,
-) => {
-  const { quality = 50 } = options
+export const toWebp: IOptimizeMethod = (input, output, options) => {
+  const { quality = 80, keepMetadata = true } = options
+  log.info('toWebp quality=%d', quality)
+  const pipeline = openImage(input).webp({ quality })
+  if (keepMetadata) pipeline.keepMetadata()
+  return pipeline.toFile(output).catch((e: { message: any }) => { throw new Error(e.message) })
+}
 
-  log.info('Converting to AVIF with quality', quality)
-
-  const pipeline = (input.endsWith('.bmp')?bmp.sharpFromBmp(input):sharp(input)).avif({ quality })
-
-  if(store.get("keepmeta", true)) pipeline.keepMetadata();
-
-  return (pipeline.toFile(output)).catch((e:{message:any}) => {
-      throw new Error(`${e.message}`)
-    })
+export const toAvif: IOptimizeMethod = (input, output, options) => {
+  const { quality = 50, keepMetadata = true } = options
+  log.info('toAvif quality=%d', quality)
+  const pipeline = openImage(input).avif({ quality })
+  if (keepMetadata) pipeline.keepMetadata()
+  return pipeline.toFile(output).catch((e: { message: any }) => { throw new Error(e.message) })
 }

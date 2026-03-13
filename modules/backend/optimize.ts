@@ -1,19 +1,19 @@
-import * as os from 'os'
 import * as fs from 'fs-extra'
 import log from 'electron-log'
 import { IImageFile, IOptimizeOptions, SupportedExt } from '../common/types'
 import * as fu from '../common/file-utils'
 import {
-  pngquant, mozjpeg, cwebp, IOptimizeMethod,
-  cavif,
+  toPng,
+  toJpeg,
+  toWebp,
+  toAvif,
+  IOptimizeMethod,
 } from '../optimizers'
 import { getFileUrl } from '../common/file-utils'
+import store from './configStore'
 
-const { promisify } = require('util');
-// @ts-ignore
-const convert = require('heic-convert');
-
-const platform = os.platform()
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const convert = require('heic-convert')
 
 const optimize = async (
   image: IImageFile,
@@ -42,42 +42,39 @@ const optimize = async (
   try {
     dest.size = await fu.getSize(destPath)
   } catch (err) {
-    log.info('optimize', 'miss cache (desk)')
+    log.info('optimize', 'miss cache')
 
-    /**
-     * pngquant on linux / windows does not support JPEG to PNG.
-     * in this case, we should use JIMP converting JPEG to PNG firstly.
-     */
-    // @ts-ignore
     if (image.ext === 'heic') {
-      log.info(
-        'optimize',
-        'should converting HEIC to PNG',
-      )
+      log.info('optimize', 'converting HEIC to PNG intermediate')
 
       const intermediate = sourcePath.replace(/\.heic$/, '.1.png')
 
       try {
         await fs.access(intermediate)
       } catch (error) {
-        log.info('optimize', 'miss cache (JIMP)')
-        const inputBuffer = await promisify(fs.readFile)(sourcePath);
+        log.info('optimize', 'miss cache (heic intermediate)')
+        const inputBuffer = await fs.readFile(sourcePath)
         const outputBuffer = await convert({
-          buffer: inputBuffer, // the HEIC file buffer
-          format: 'PNG'        // output format
-        });
-      
-        await promisify(fs.writeFile)(intermediate, outputBuffer);
+          buffer: inputBuffer,
+          format: 'PNG',
+        })
+        await fs.writeFile(intermediate, outputBuffer)
       }
 
       sourcePath = intermediate
     }
 
+    const globalOptions: IOptimizeOptions = {
+      ...options,
+      keepMetadata: store.get('keepmeta', true) as boolean,
+      progressive: store.get('progressive', true) as boolean,
+    }
+
     const factory: { [ext: string]: IOptimizeMethod } = {
-      [SupportedExt.png]: pngquant,
-      [SupportedExt.jpg]: mozjpeg,
-      [SupportedExt.webp]: cwebp,
-      [SupportedExt.avif]: cavif,
+      [SupportedExt.png]: toPng,
+      [SupportedExt.jpg]: toJpeg,
+      [SupportedExt.webp]: toWebp,
+      [SupportedExt.avif]: toAvif,
     }
 
     const optimizeMethod = factory[exportExt]
@@ -86,7 +83,7 @@ const optimize = async (
       throw new Error(`Unsupported file format: ${image.ext}`)
     }
 
-    await optimizeMethod(sourcePath, destPath, options)
+    await optimizeMethod(sourcePath, destPath, globalOptions)
 
     dest.size = await fu.getSize(destPath)
   }

@@ -3,13 +3,13 @@ import '../_tools/before-test'
 import * as path from 'path'
 import { fullDiff } from '../_tools/image-diff'
 import { tmpdir } from '../../common/file-utils'
-import { mozjpeg } from '../../optimizers'
+import { toJpeg } from '../../optimizers'
 
-test('pngquant', async () => {
+test('toJpeg', async () => {
   const source = path.resolve(__dirname, '../_files/fox.jpg')
   const target = path.resolve(tmpdir, `${Date.now()}_output_fox.jpg`)
 
-  await mozjpeg(source, target, {
+  await toJpeg(source, target, {
     quality: 90,
   })
 

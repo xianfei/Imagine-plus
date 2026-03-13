@@ -58,17 +58,17 @@ export interface IImageFile {
 }
 
 export interface IOptimizeOptions {
-  /**
-   * 2~256, for PNG
-   */
+  /** 2~256, for PNG */
   color?: number
 
-  /**
-   * 10~100, for JPEG
-   */
+  /** 10~100, for JPEG/WebP/AVIF */
   quality?: number
 
   exportExt?: SupportedExt
+
+  keepMetadata?: boolean
+
+  progressive?: boolean
 }
 
 export interface ITaskItem {

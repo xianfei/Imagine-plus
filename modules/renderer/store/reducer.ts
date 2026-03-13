@@ -66,6 +66,7 @@ export const createOptimizeOptions = (ext: SupportedExt) => {
 }
 
 const savedOptions = storage.getOptions()
+const { defaultOptions: savedDefaultOptions, ...otherSavedOptions } = savedOptions || {}
 
 function updateTaskList(state: IState, updater: (task: Tasks) => Tasks): IState {
   return {
@@ -243,8 +244,8 @@ export default handleActions<IState, any>({
       avif: createOptimizeOptions(SupportedExt.avif),
       heic: createOptimizeOptions(SupportedExt.heic),
       bmp: createOptimizeOptions(SupportedExt.bmp),
-      ...(savedOptions?.defaultOptions || {}),
+      ...(savedDefaultOptions || {}),
     },
-    ...(savedOptions ? { ...savedOptions, defaultOptions: undefined } : {}),
+    ...(savedOptions ? otherSavedOptions : {}),
   },
 }) as Reducer<IState, any>
