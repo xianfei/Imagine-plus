@@ -8,6 +8,7 @@ What's changed in this fork:
 - UI improvements
 - More features (keep metadata, progressive encode, etc.)
 - Comparison mode
+- Added batch image resizing function
 - Support more formats (see the table below)
 
 |  | from JPG | from PNG | from WebP | from AVIF | from HEIC | from BMP |
