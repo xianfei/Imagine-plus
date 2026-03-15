@@ -6,6 +6,7 @@ import Icon from '../components/Icon'
 import Popper from '../components/Popper'
 import Tooltip from '../components/Tooltip'
 import OptionsPanel from './OptionsPanel'
+import ResizePanel from './ResizePanel'
 import actions from '../store/actionCreaters'
 import { SaveType, IUpdateInfo, IState } from '../../common/types'
 import * as apis from '../apis'
@@ -21,6 +22,7 @@ interface IActionBarStateProps {
   sizeIncreaseCount: number
   updateInfo: IUpdateInfo | undefined
   optionsVisible: boolean
+  resizeEnabled: boolean
 }
 
 interface IActionBarDispatchProps {
@@ -37,6 +39,7 @@ function ActionBar({
   sizeIncreaseCount,
   updateInfo,
   optionsVisible,
+  resizeEnabled,
   onAdd,
   onSave,
   onRemoveAll,
@@ -46,6 +49,7 @@ function ActionBar({
 }: IActionBarStateProps & IActionBarDispatchProps) {
   const [savePopperVisible, setSavePopperVisible] = useState(false)
   const [clearPopperVisible, setClearPopperVisible] = useState(false)
+  const [resizePanelVisible, setResizePanelVisible] = useState(false)
 
   const handleOptionsVisibleClick = () => {
     onOptionsVisibleToggle(!optionsVisible)
@@ -54,6 +58,10 @@ function ActionBar({
   const handleOptionsHide = useCallback(() => {
     onOptionsVisibleToggle(false)
   }, [onOptionsVisibleToggle])
+
+  const handleResizePanelClose = useCallback(() => {
+    setResizePanelVisible(false)
+  }, [])
 
   const handleSaveButtonClick = () => {
     setSavePopperVisible(!savePopperVisible)
@@ -190,6 +198,24 @@ function ActionBar({
 
       <Popper
         className="options-popper actionbar-popper"
+        visible={resizePanelVisible}
+        popper={(
+          <ResizePanel onClose={handleResizePanelClose} />
+        )}
+      >
+        <Tooltip title={__('resize')} placement="bottom">
+          <button
+            type="button"
+            className={classnames({ '-active': resizeEnabled })}
+            onClick={() => setResizePanelVisible(!resizePanelVisible)}
+          >
+            <Icon name="resize" />
+          </button>
+        </Tooltip>
+      </Popper>
+
+      <Popper
+        className="options-popper actionbar-popper"
         visible={optionsVisible}
         popper={(
           <OptionsPanel onApplyClick={handleOptionsHide} />
@@ -215,6 +241,7 @@ export default connect<IActionBarStateProps, IActionBarDispatchProps, Record<str
   count: state.tasks.length,
   updateInfo: state.globals.updateInfo,
   optionsVisible: state.globals.optionsVisible,
+  resizeEnabled: state.globals.resizeOptions.enabled,
   sizeIncreaseCount: state.tasks.reduce(
     (count, item) => (count + (isTaskSizeIncreased(item) ? 1 : 0)),
     0,

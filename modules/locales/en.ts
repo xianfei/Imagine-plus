@@ -22,4 +22,10 @@ export default {
   compare: 'Compare',
   new_version: 'Upgrade',
   apply_now: 'Apply now',
+  resize: 'Resize',
+  resize_long_edge: 'Max long edge',
+  resize_short_edge: 'Max short edge',
+  resize_scale: 'Scale',
+  resize_apply: 'Apply to all',
+  resize_clear: 'Clear resize',
 }

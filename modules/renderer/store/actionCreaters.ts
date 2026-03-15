@@ -7,6 +7,7 @@ import {
   IImageFile,
   IOptimizeOptions,
   IUpdateInfo,
+  IResizeOptions,
   SupportedExt,
 } from '../../common/types'
 
@@ -50,4 +51,8 @@ export default {
   defaultOptions: createAction<IDefaultOptionsPayload>(ACTIONS.DEFAULT_OPTIONS_UPDATE),
 
   optionsApply: createAction(ACTIONS.OPTIONS_APPLY),
+
+  resizeApply: createAction<IResizeOptions>(ACTIONS.RESIZE_APPLY),
+
+  resizeClear: createAction(ACTIONS.RESIZE_CLEAR),
 }

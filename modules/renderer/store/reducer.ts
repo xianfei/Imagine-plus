@@ -11,6 +11,8 @@ import {
   IState,
   IGlobals,
   IDefaultOptions,
+  IResizeOptions,
+  ResizeMode,
 } from '../../common/types'
 import {
   ACTIONS,
@@ -113,7 +115,7 @@ function getInitialTaskOptions(exportExt: SupportedExt, defaultOptions: IDefault
 
 export default handleActions<IState, any>({
   [ACTIONS.TASK_ADD](state, action: Action<IImageFile[]>) {
-    const { defaultOptions } = state.globals
+    const { defaultOptions, resizeOptions } = state.globals
 
     return updateTaskList(state, (tasks) => [
       ...tasks,
@@ -121,11 +123,12 @@ export default handleActions<IState, any>({
         .filter((image) => !tasks.some((task) => task.id === image.id))
         .map<ITaskItem>((image) => {
         const exportExt = defaultOptions[image.ext]?.exportExt || image.ext
+        const opts = getInitialTaskOptions(exportExt, defaultOptions)
 
         return {
           id: image.id,
           image,
-          options: getInitialTaskOptions(exportExt, defaultOptions),
+          options: resizeOptions.enabled ? { ...opts, resize: resizeOptions } : opts,
           status: TaskStatus.PENDING,
         }
       }),
@@ -217,6 +220,29 @@ export default handleActions<IState, any>({
     })
   },
 
+  [ACTIONS.RESIZE_APPLY](state, action: Action<IResizeOptions>) {
+    const resizeOptions = { ...action.payload, enabled: true }
+    const newState = updateGlobalsPartial(state, { resizeOptions })
+    return updateTaskList(newState, (list) => list.map((item) => ({
+      ...item,
+      options: { ...item.options, resize: resizeOptions },
+      status: TaskStatus.PENDING,
+    })))
+  },
+
+  [ACTIONS.RESIZE_CLEAR](state) {
+    const resizeOptions: IResizeOptions = { ...state.globals.resizeOptions, enabled: false }
+    const newState = updateGlobalsPartial(state, { resizeOptions })
+    return updateTaskList(newState, (list) => list.map((item) => {
+      const { resize: _, ...optionsWithoutResize } = item.options
+      return {
+        ...item,
+        options: optionsWithoutResize,
+        status: TaskStatus.PENDING,
+      }
+    }))
+  },
+
   [ACTIONS.DEFAULT_OPTIONS_UPDATE](state, action: Action<IDefaultOptionsPayload>) {
     const { ext, options } = action.payload
     const defaultOptions = {
@@ -247,5 +273,10 @@ export default handleActions<IState, any>({
       ...(savedDefaultOptions || {}),
     },
     ...(savedOptions ? otherSavedOptions : {}),
+    resizeOptions: {
+      enabled: false,
+      mode: ResizeMode.LONG_EDGE,
+      value: 1920,
+    },
   },
 }) as Reducer<IState, any>

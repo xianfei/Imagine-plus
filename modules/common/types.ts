@@ -3,6 +3,18 @@ import type { UpdateInfo } from 'electron-updater'
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type Empty = {}
 
+export enum ResizeMode {
+  LONG_EDGE = 'LONG_EDGE',
+  SHORT_EDGE = 'SHORT_EDGE',
+  SCALE = 'SCALE',
+}
+
+export interface IResizeOptions {
+  enabled: boolean
+  mode: ResizeMode
+  value: number
+}
+
 export enum SupportedExt {
   png = 'png',
   jpg = 'jpg',
@@ -69,6 +81,8 @@ export interface IOptimizeOptions {
   keepMetadata?: boolean
 
   progressive?: boolean
+
+  resize?: IResizeOptions
 }
 
 export interface ITaskItem {
@@ -106,6 +120,7 @@ export interface IGlobals {
   updateInfo?: UpdateInfo
   optionsVisible: boolean
   defaultOptions: IDefaultOptions
+  resizeOptions: IResizeOptions
 }
 
 export interface IState {

@@ -23,6 +23,8 @@ app.on('ready', () => {
     // eslint-disable-next-line global-require, @typescript-eslint/no-var-requires
     require('./dev/dev').start().then(() => {
       imagine.start('http://localhost:9999/')
+    }).catch((err: Error) => {
+      log.error('Dev server failed to start:', err)
     })
   } else {
     imagine.start(`file://${path.resolve(app.getAppPath(), 'dist/web/index.html')}`)

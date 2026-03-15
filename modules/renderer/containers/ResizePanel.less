@@ -1,0 +1,142 @@
+.resize-panel {
+  width: 280px;
+
+  .resize-panel-body {
+    padding: 12px 14px 10px;
+  }
+
+  .resize-panel-title {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: #444;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+
+  .resize-modes {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+
+  .resize-mode-option {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #555;
+
+    input[type='radio'] {
+      accent-color: #5788c0;
+      cursor: pointer;
+      margin: 0;
+    }
+
+    &:hover span {
+      color: #222;
+    }
+  }
+
+  .resize-value-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    input[type='range'] {
+      flex: 1;
+      accent-color: #5788c0;
+    }
+
+    .resize-value-input {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex-shrink: 0;
+
+      input[type='number'] {
+        width: 44px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 2px 4px;
+        font-size: 12px;
+        text-align: right;
+        outline: none;
+        color: #333;
+
+        &:focus {
+          border-color: #5788c0;
+        }
+
+        &::-webkit-inner-spin-button,
+        &::-webkit-outer-spin-button {
+          display: none;
+        }
+      }
+
+      .resize-unit {
+        font-size: 11px;
+        color: #888;
+        min-width: 14px;
+      }
+    }
+  }
+}
+
+.resize-panel-footer {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  background: #fafafa;
+  border-top: 1px solid #eee;
+  border-radius: 0 0 10px 10px;
+
+  > .blank {
+    flex: 1;
+  }
+
+  button {
+    padding: 8px 10px;
+    border-radius: 2px;
+    font-size: 12px;
+    outline: 0;
+    border: 0;
+    background: transparent;
+    color: #667;
+    line-height: 14px;
+    transition: 0.4s;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      color: #000;
+      background: #eee;
+    }
+
+    &:disabled {
+      color: #ccc;
+      cursor: default;
+    }
+
+    .icon-doneall {
+      font-size: 14px;
+      margin-right: 4px;
+      vertical-align: top;
+    }
+
+    .icon-close {
+      font-size: 12px;
+      display: block;
+    }
+  }
+
+  .btn-apply {
+    color: #5788c0;
+
+    &:hover {
+      color: #3a6aa0;
+      background: #eef3fa;
+    }
+  }
+}

@@ -94,6 +94,9 @@ class TaskView extends PureComponent<ITaskProps & ITaskDispatchProps, Empty> {
             loading="lazy"
             alt="Loading..."
           />
+          {options.resize?.enabled && (
+            <span className="resize-tag">RESIZED</span>
+          )}
           <div className="image-view-menu">
             <Popper
               hoverMode
