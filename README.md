@@ -21,13 +21,6 @@ What's changed in this fork:
 
 <img width="500" alt="ScreenShot_2026-03-15_152835_450" src="https://github.com/user-attachments/assets/8ec2e38c-8ba5-4415-ba21-bb1855e87f34" />
 
-# Imagine
-
-[![build](https://travis-ci.org/xianfei/Imagine-plus.svg?branch=master)](https://travis-ci.org/xianfei/Imagine-plus)
-
-Imagine is a desktop app for compression of PNG and JPEG, with a modern and friendly UI.
-
-Save for web.
 
 ## Install
 
@@ -48,19 +41,6 @@ Install it with command line:
 chmod a+x Imagine-x.y.z-x86_64.AppImage # make executable
 ./Imagine-x.y.z-x86_64.AppImage # install and run
 ```
-
-## Screenshot
-
-![Screenshot](./screenshots/shot.jpg)
-
-## Features
-
- - Multi format (JPEG, PNG, WebP)
- - Format conversion
- - Cross platform
- - GUI
- - Batch optimization
- - i18n (English, 简体中文, Nederlands, Español, Français, Italiano, Deutsch)
 
 ## Build and Contribute
 
