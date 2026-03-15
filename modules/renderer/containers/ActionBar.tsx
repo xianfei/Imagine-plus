@@ -190,7 +190,7 @@ function ActionBar({
         ) : null
       }
 
-      <span className='title-app-name'>Imagine</span>
+      <span className='title-app-name'>Imagine Plus</span>
 
       {/* <span className='title-app-version' onClick={()=>imagineAPI.ipcSend('about', 1)}>v{pkg.version}</span> */}
 
