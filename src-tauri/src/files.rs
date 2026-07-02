@@ -25,7 +25,8 @@ fn md5_hex(data: &[u8]) -> String {
 
 /// Sniff the real image type from content, normalized the way the
 /// Electron backend (file-type) did: jpeg -> jpg, heif -> heic.
-/// heic/avif are rejected on platforms without a native decoder.
+/// heic/avif are accepted everywhere: platforms without ImageIO decode
+/// them in the webview (libheif-js / canvas) via write_intermediate.
 fn sniff_ext(path: &Path) -> Option<String> {
     let kind = infer::get_from_path(path).ok()??;
     let ext = match kind.extension() {
@@ -33,11 +34,6 @@ fn sniff_ext(path: &Path) -> Option<String> {
         "heif" => "heic",
         other => other,
     };
-
-    if matches!(ext, "heic" | "avif") && !crate::native_decode::decode_supported() {
-        return None;
-    }
-
     SUPPORTED_EXTS
         .contains(&ext)
         .then(|| ext.to_string())

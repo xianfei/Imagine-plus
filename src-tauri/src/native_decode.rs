@@ -1,11 +1,5 @@
 use std::path::Path;
 
-/// Whether this platform can decode HEIC/AVIF input at all; used to keep
-/// unsupported formats out of the ingest sniffer and the file dialog.
-pub fn decode_supported() -> bool {
-    cfg!(target_os = "macos")
-}
-
 /// Decode HEIC/AVIF into a lossless PNG using macOS ImageIO via `sips`
 /// (hardware HEVC decode on Apple Silicon, patent royalties covered by
 /// the OS, EXIF/ICC carried into the PNG).
@@ -34,9 +28,11 @@ pub fn decode_to_png(source: &Path, dest: &Path) -> Result<(), String> {
     Ok(())
 }
 
-/// TODO(win/linux): WIC + HEIF extension on Windows, or a webview-side
-/// libheif-js fallback; until then HEIC/AVIF input is macOS-only.
+/// Non-macOS platforms decode in the webview instead (libheif-js WASM for
+/// HEIC, canvas for AVIF) and deliver raw RGBA through the
+/// `write_intermediate` command before optimize runs; reaching this stub
+/// means that fallback did not produce the intermediate.
 #[cfg(not(target_os = "macos"))]
 pub fn decode_to_png(_source: &Path, _dest: &Path) -> Result<(), String> {
-    Err("HEIC/AVIF input is currently only supported on macOS".into())
+    Err("HEIC/AVIF decode fallback did not run (missing intermediate)".into())
 }

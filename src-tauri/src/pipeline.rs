@@ -135,6 +135,32 @@ pub fn optimize(image_file: &ImageFile, options: &OptimizeOptions) -> Result<Ima
     Ok(dest)
 }
 
+/// Persist raw RGBA (decoded in the webview on platforms without native
+/// HEIC/AVIF support) as the standard `{id}.1.png` intermediate.
+pub fn write_intermediate_png(
+    id: &str,
+    width: u32,
+    height: u32,
+    data: &[u8],
+) -> Result<(), String> {
+    let expected = (width as usize)
+        .checked_mul(height as usize)
+        .and_then(|n| n.checked_mul(4))
+        .ok_or("dimensions overflow")?;
+    if data.len() != expected {
+        return Err(format!(
+            "raw buffer size {} does not match {width}x{height} RGBA",
+            data.len()
+        ));
+    }
+
+    let rgba = RgbaImage::from_raw(width, height, data.to_vec())
+        .ok_or("invalid raw buffer")?;
+
+    let dest = tmpdir().join(format!("{id}.1.png"));
+    rgba.save(&dest).map_err(|e| e.to_string())
+}
+
 /// In-place ICC -> sRGB pixel conversion via qcms (Firefox's CMS).
 /// No-ops when the profile fails to parse or already is sRGB-like.
 fn convert_to_srgb(rgba: &mut RgbaImage, icc: &[u8]) {

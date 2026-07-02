@@ -92,14 +92,12 @@ pub fn file_add(app: AppHandle, files: Vec<String>) {
 pub fn file_select(app: AppHandle) {
     let handle = app.clone();
 
-    let mut extensions = vec!["jpg", "jpeg", "png", "webp", "bmp"];
-    if crate::native_decode::decode_supported() {
-        extensions.extend(["avif", "heic"]);
-    }
-
     app.dialog()
         .file()
-        .add_filter("Images", &extensions)
+        .add_filter(
+            "Images",
+            &["jpg", "jpeg", "png", "avif", "webp", "heic", "bmp"],
+        )
         .pick_files(move |paths| {
             if let Some(paths) = paths {
                 let list: Vec<String> = paths
@@ -110,6 +108,55 @@ pub fn file_select(app: AppHandle) {
                 receive_files(&handle, list);
             }
         });
+}
+
+fn validate_token(value: &str) -> Result<(), String> {
+    if !value.is_empty() && value.chars().all(|c| c.is_ascii_alphanumeric()) {
+        Ok(())
+    } else {
+        Err("invalid identifier".into())
+    }
+}
+
+/// Webview-side HEIC/AVIF decode fallback (platforms without ImageIO):
+/// the renderer decodes to raw RGBA and hands it back through these
+/// three commands to produce the same PNG intermediate the pipeline uses.
+#[tauri::command]
+pub fn has_intermediate(id: String) -> Result<bool, String> {
+    validate_token(&id)?;
+    Ok(files::tmpdir().join(format!("{id}.1.png")).exists())
+}
+
+#[tauri::command]
+pub fn read_source(id: String, ext: String) -> Result<tauri::ipc::Response, String> {
+    validate_token(&id)?;
+    validate_token(&ext)?;
+
+    let bytes = std::fs::read(files::get_file_path(&id, &ext)).map_err(|e| e.to_string())?;
+    Ok(tauri::ipc::Response::new(bytes))
+}
+
+#[tauri::command]
+pub fn write_intermediate(request: tauri::ipc::Request<'_>) -> Result<(), String> {
+    let header = |name: &str| -> Result<String, String> {
+        request
+            .headers()
+            .get(name)
+            .and_then(|v| v.to_str().ok())
+            .map(String::from)
+            .ok_or_else(|| format!("missing header: {name}"))
+    };
+
+    let id = header("id")?;
+    validate_token(&id)?;
+    let width: u32 = header("width")?.parse().map_err(|_| "bad width")?;
+    let height: u32 = header("height")?.parse().map_err(|_| "bad height")?;
+
+    let tauri::ipc::InvokeBody::Raw(data) = request.body() else {
+        return Err("expected raw RGBA body".into());
+    };
+
+    crate::pipeline::write_intermediate_png(&id, width, height, data)
 }
 
 /// Folder import: Electron's Open dialog allowed picking directories on

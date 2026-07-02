@@ -12,6 +12,7 @@ import {
   IpcChannel,
 } from '../common/types'
 import { ImagineAPI } from './interface'
+import { ensureIntermediate } from './webview-decode'
 import __ from '../locales'
 import pkg from '../../package.json'
 
@@ -167,6 +168,9 @@ export function createTauriAPI(): ImagineAPI {
     },
 
     async optimize(request) {
+      // non-macOS heic/avif sources need the webview decode fallback first
+      await ensureIntermediate(request.image)
+
       const result = await invoke<IImageFile>('optimize', {
         image: request.image,
         options: request.options,
