@@ -5,6 +5,7 @@
 import { invoke, convertFileSrc } from '@tauri-apps/api/core'
 import { listen } from '@tauri-apps/api/event'
 import { getCurrentWebview } from '@tauri-apps/api/webview'
+import { getCurrentWindow } from '@tauri-apps/api/window'
 import {
   IImageFile,
   IUpdateInfo,
@@ -49,6 +50,17 @@ function menuLabels(): Record<string, string> {
 type UpdateListener = (payload: IUpdateInfo) => void
 const updateListeners: UpdateListener[] = []
 
+/** electron-updater only fired on semver-greater remotes; match that */
+function isNewerVersion(remote: string, local: string): boolean {
+  const a = remote.split('.').map(Number)
+  const b = local.split('.').map(Number)
+  for (let i = 0; i < Math.max(a.length, b.length); i += 1) {
+    const d = (a[i] || 0) - (b[i] || 0)
+    if (d !== 0) return d > 0
+  }
+  return false
+}
+
 /** electron-updater is gone: a plain GitHub API version check instead */
 async function checkForUpdates() {
   try {
@@ -59,7 +71,7 @@ async function checkForUpdates() {
     const release = await res.json()
     const latest = String(release.tag_name || '').replace(/^v/, '')
 
-    if (latest && latest !== pkg.version) {
+    if (latest && isNewerVersion(latest, pkg.version)) {
       const info = { version: latest } as IUpdateInfo
       updateListeners.forEach((listener) => listener(info))
     }
@@ -85,7 +97,8 @@ export function createTauriAPI(): ImagineAPI {
     ipcSend(channel: string, payload?: unknown) {
       switch (channel) {
         case IpcChannel.READY:
-          invoke('ready')
+          // labels ride along so the menu localizes at boot
+          invoke('ready', { labels: menuLabels() })
           break
         case IpcChannel.FILE_ADD:
           invoke('file_add', { files: payload })
@@ -185,6 +198,17 @@ export function createTauriAPI(): ImagineAPI {
 
 /** prime the config cache and kick off the update check before first render */
 export async function initTauriBridge(): Promise<void> {
+  // Tauri never fires beforeunload on window close; replay the close
+  // request as a cancelable synthetic event so the alone-mode close
+  // interception in Alone.tsx keeps working unchanged
+  getCurrentWindow().onCloseRequested((event) => {
+    const e = new Event('beforeunload', { cancelable: true })
+    window.dispatchEvent(e)
+    if (e.defaultPrevented) {
+      event.preventDefault()
+    }
+  })
+
   configCache = (await invoke<Record<string, unknown>>('store_get_all')) || {}
 
   if (configCache.checkupdate !== false) {

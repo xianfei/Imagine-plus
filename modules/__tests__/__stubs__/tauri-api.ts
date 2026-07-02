@@ -13,3 +13,7 @@ export const listen = async () => () => undefined
 export const getCurrentWebview = () => ({
   onDragDropEvent: async () => () => undefined,
 })
+
+export const getCurrentWindow = () => ({
+  onCloseRequested: async () => () => undefined,
+})

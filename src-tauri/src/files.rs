@@ -25,6 +25,7 @@ fn md5_hex(data: &[u8]) -> String {
 
 /// Sniff the real image type from content, normalized the way the
 /// Electron backend (file-type) did: jpeg -> jpg, heif -> heic.
+/// heic/avif are rejected on platforms without a native decoder.
 fn sniff_ext(path: &Path) -> Option<String> {
     let kind = infer::get_from_path(path).ok()??;
     let ext = match kind.extension() {
@@ -32,6 +33,11 @@ fn sniff_ext(path: &Path) -> Option<String> {
         "heif" => "heic",
         other => other,
     };
+
+    if matches!(ext, "heic" | "avif") && !crate::native_decode::decode_supported() {
+        return None;
+    }
+
     SUPPORTED_EXTS
         .contains(&ext)
         .then(|| ext.to_string())
@@ -104,11 +110,29 @@ pub fn reext(filename: &str, ext: &str) -> String {
 
     match current.as_deref() {
         Some(cur) if cur == ext || (cur == "jpeg" && ext == "jpg") => filename.to_string(),
-        Some(cur) if SUPPORTED_EXTS.contains(&cur) || cur == "jpeg" => path
+        // NB: 'jpeg' deliberately not included — the TS SupportedExt check
+        // makes 'photo.jpeg' + png append ('photo.jpeg.png'), not replace
+        Some(cur) if SUPPORTED_EXTS.contains(&cur) => path
             .with_extension(ext)
             .to_string_lossy()
             .into_owned(),
         _ => format!("{filename}.{ext}"),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::reext;
+
+    #[test]
+    fn reext_matches_ts_behavior() {
+        assert_eq!(reext("a/photo.jpg", "jpg"), "a/photo.jpg");
+        assert_eq!(reext("a/photo.JPG", "jpg"), "a/photo.JPG");
+        assert_eq!(reext("a/photo.jpeg", "jpg"), "a/photo.jpeg");
+        assert_eq!(reext("a/photo.jpg", "png"), "a/photo.png");
+        assert_eq!(reext("a/photo.jpeg", "png"), "a/photo.jpeg.png");
+        assert_eq!(reext("a/photo.tiff", "png"), "a/photo.tiff.png");
+        assert_eq!(reext("a/photo", "png"), "a/photo.png");
     }
 }
 

@@ -53,6 +53,7 @@ pub fn run() {
             app.on_menu_event(|app, event| match event.id().as_ref() {
                 "about" => commands::show_about(app),
                 "open" => commands::file_select(app.clone()),
+                "open_folder" => commands::folder_select(app.clone()),
                 "save_over" => {
                     let _ = app.emit("SAVE", SaveType::Over);
                 }
@@ -105,6 +106,7 @@ pub fn run() {
             commands::ready,
             commands::file_add,
             commands::file_select,
+            commands::folder_select,
             commands::optimize,
             commands::save,
             commands::sync,

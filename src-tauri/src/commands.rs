@@ -33,19 +33,50 @@ pub fn receive_files(app: &AppHandle, paths: Vec<String>) {
         }
 
         let state = app.state::<AppState>();
-        if state.ready.load(Ordering::SeqCst) {
+        // the ready check and the pending insert must be atomic with the
+        // drain in `ready`, or files ingested around READY are lost
+        let emit_now = {
+            let mut pending = state.pending.lock().unwrap();
+            if state.ready.load(Ordering::SeqCst) {
+                true
+            } else {
+                pending.extend(images.iter().cloned());
+                false
+            }
+        };
+
+        if emit_now {
             let _ = app.emit("FILE_SELECTED", &images);
-        } else {
-            state.pending.lock().unwrap().extend(images);
         }
     });
 }
 
+/// READY also carries the localized menu labels (setupLocales has run by
+/// then), so the menu switches from the English defaults immediately.
 #[tauri::command]
-pub fn ready(app: AppHandle, state: State<'_, AppState>) {
-    state.ready.store(true, Ordering::SeqCst);
+pub fn ready(
+    app: AppHandle,
+    state: State<'_, AppState>,
+    labels: std::collections::HashMap<String, String>,
+) {
+    let menu_state = {
+        let mut menu_state = state.menu_state.lock().unwrap();
+        menu_state.labels = labels;
+        menu_state.clone()
+    };
 
-    let pending: Vec<ImageFile> = state.pending.lock().unwrap().drain(..).collect();
+    let handle = app.clone();
+    let _ = app.run_on_main_thread(move || {
+        if let Ok(menu) = menu::build_menu(&handle, &menu_state) {
+            let _ = handle.set_menu(menu);
+        }
+    });
+
+    let pending: Vec<ImageFile> = {
+        let mut pending = state.pending.lock().unwrap();
+        state.ready.store(true, Ordering::SeqCst);
+        pending.drain(..).collect()
+    };
     if !pending.is_empty() {
         let _ = app.emit("FILE_SELECTED", &pending);
     }
@@ -61,12 +92,14 @@ pub fn file_add(app: AppHandle, files: Vec<String>) {
 pub fn file_select(app: AppHandle) {
     let handle = app.clone();
 
+    let mut extensions = vec!["jpg", "jpeg", "png", "webp", "bmp"];
+    if crate::native_decode::decode_supported() {
+        extensions.extend(["avif", "heic"]);
+    }
+
     app.dialog()
         .file()
-        .add_filter(
-            "Images",
-            &["jpg", "jpeg", "png", "avif", "webp", "heic", "bmp"],
-        )
+        .add_filter("Images", &extensions)
         .pick_files(move |paths| {
             if let Some(paths) = paths {
                 let list: Vec<String> = paths
@@ -77,6 +110,25 @@ pub fn file_select(app: AppHandle) {
                 receive_files(&handle, list);
             }
         });
+}
+
+/// Folder import: Electron's Open dialog allowed picking directories on
+/// macOS; tauri-plugin-dialog cannot mix files and folders, so folders get
+/// their own dialog (wired to an extra menu item).
+#[tauri::command]
+pub fn folder_select(app: AppHandle) {
+    let handle = app.clone();
+
+    app.dialog().file().pick_folders(move |folders| {
+        if let Some(folders) = folders {
+            let list: Vec<String> = folders
+                .into_iter()
+                .filter_map(|p| p.into_path().ok())
+                .map(|p| p.to_string_lossy().into_owned())
+                .collect();
+            receive_files(&handle, list);
+        }
+    });
 }
 
 #[tauri::command]

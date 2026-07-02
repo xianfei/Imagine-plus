@@ -36,6 +36,7 @@ ravif = "0.13.0"
 rgb = "0.8.53"
 img-parts = "0.4.0"
 png = "0.18.1"
+qcms = "0.3.0"
 
 [profile.release]
 strip = true

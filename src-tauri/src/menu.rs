@@ -33,7 +33,17 @@ pub fn build_menu<R: Runtime>(
         .accelerator("CmdOrCtrl+O")
         .build(app)?;
 
-    let mut file_menu = SubmenuBuilder::new(app, label(state, "file", "File")).item(&open);
+    // Electron's Open dialog could pick folders too (macOS); the Tauri
+    // dialog cannot mix files and folders, hence a dedicated item
+    let open_folder = MenuItemBuilder::with_id(
+        "open_folder",
+        label(state, "open_folder", "Open Folder…"),
+    )
+    .build(app)?;
+
+    let mut file_menu = SubmenuBuilder::new(app, label(state, "file", "File"))
+        .item(&open)
+        .item(&open_folder);
 
     if state.task_count > 0 {
         let save = MenuItemBuilder::with_id("save_over", label(state, "save", "Save"))

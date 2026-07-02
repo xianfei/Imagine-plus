@@ -1,5 +1,11 @@
 use std::path::Path;
 
+/// Whether this platform can decode HEIC/AVIF input at all; used to keep
+/// unsupported formats out of the ingest sniffer and the file dialog.
+pub fn decode_supported() -> bool {
+    cfg!(target_os = "macos")
+}
+
 /// Decode HEIC/AVIF into a lossless PNG using macOS ImageIO via `sips`
 /// (hardware HEVC decode on Apple Silicon, patent royalties covered by
 /// the OS, EXIF/ICC carried into the PNG).

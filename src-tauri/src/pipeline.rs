@@ -117,6 +117,11 @@ pub fn optimize(image_file: &ImageFile, options: &OptimizeOptions) -> Result<Ima
         }
         "avif" => {
             let quality = options.quality.unwrap_or(50);
+            // AVIF cannot carry the ICC profile (ravif limitation): convert
+            // the pixels to sRGB instead so colors still match the source
+            if let Some(icc) = &meta.icc {
+                convert_to_srgb(&mut rgba, icc);
+            }
             codecs::encode_avif(&rgba, quality, meta.exif.as_deref())?
         }
         other => {
@@ -128,6 +133,26 @@ pub fn optimize(image_file: &ImageFile, options: &OptimizeOptions) -> Result<Ima
     dest.size = encoded.len() as u64;
 
     Ok(dest)
+}
+
+/// In-place ICC -> sRGB pixel conversion via qcms (Firefox's CMS).
+/// No-ops when the profile fails to parse or already is sRGB-like.
+fn convert_to_srgb(rgba: &mut RgbaImage, icc: &[u8]) {
+    let Some(input) = qcms::Profile::new_from_slice(icc, false) else {
+        return;
+    };
+    let output = qcms::Profile::new_sRGB();
+
+    let Some(transform) = qcms::Transform::new(
+        &input,
+        &output,
+        qcms::DataType::RGBA8,
+        qcms::Intent::Perceptual,
+    ) else {
+        return;
+    };
+
+    transform.apply(rgba.as_mut());
 }
 
 /// Port of `applyResize` in modules/optimizers/index.ts, on top of

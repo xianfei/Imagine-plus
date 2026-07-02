@@ -31,6 +31,7 @@
   "author": "meowtec<bertonzh@gmail.com> & xianfei<xianfei@bupt.cn>",
   "license": "ISC",
   "devDependencies": {
+    "@tauri-apps/api": "^2.11.1",
     "@tauri-apps/cli": "^2.11.4",
     "@types/electron-devtools-installer": "~2.2.0",
     "@types/fs-extra": "^9.0.7",
@@ -92,7 +93,6 @@
     "vite-plugin-svg-sprite": "^0.2.6"
   },
   "dependencies": {
-    "@tauri-apps/api": "^2.11.1",
     "child-process-promise": "^2.2.1",
     "electron-log": "^4.3.2",
     "electron-store": "^8.2.0",
