@@ -5,6 +5,7 @@ import classnames from 'classnames'
 import Icon from '../components/Icon'
 import Popper from '../components/Popper'
 import Tooltip from '../components/Tooltip'
+import WindowControls from '../components/WindowControls'
 import OptionsPanel from './OptionsPanel'
 import ResizePanel from './ResizePanel'
 import actions from '../store/actionCreaters'
@@ -190,11 +191,13 @@ function ActionBar({
         ) : null
       }
 
-      <span className='title-app-name'>Imagine Plus</span>
+      {/* data-tauri-drag-region only applies to the exact mousedown target,
+          so every non-interactive element covering bar area needs it */}
+      <span data-tauri-drag-region className='title-app-name'>Imagine Plus</span>
 
       {/* <span className='title-app-version' onClick={()=>imagineAPI.ipcSend('about', 1)}>v{pkg.version}</span> */}
 
-      <div className="blank" />
+      <div data-tauri-drag-region className="blank" />
 
       <Popper
         className="options-popper actionbar-popper"
@@ -233,6 +236,8 @@ function ActionBar({
           </button>
         </Tooltip>
       </Popper>
+
+      <WindowControls />
     </div>
   )
 }

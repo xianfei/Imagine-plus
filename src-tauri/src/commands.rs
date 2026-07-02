@@ -339,3 +339,25 @@ pub fn open_external(url: String) {
         log::error!("failed to open {url}: {err}");
     }
 }
+
+/// Custom window buttons (Windows has no titleBarOverlay equivalent).
+/// close() goes through the close-requested path so the alone-mode
+/// interception keeps working.
+#[tauri::command]
+pub fn window_minimize(window: tauri::WebviewWindow) {
+    let _ = window.minimize();
+}
+
+#[tauri::command]
+pub fn window_toggle_maximize(window: tauri::WebviewWindow) {
+    if window.is_maximized().unwrap_or(false) {
+        let _ = window.unmaximize();
+    } else {
+        let _ = window.maximize();
+    }
+}
+
+#[tauri::command]
+pub fn window_close(window: tauri::WebviewWindow) {
+    let _ = window.close();
+}

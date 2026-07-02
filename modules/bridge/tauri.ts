@@ -182,6 +182,14 @@ export function createTauriAPI(): ImagineAPI {
       invoke('open_external', { url: link })
     },
 
+    windowControls: navigator.platform.toLowerCase().startsWith('win')
+      ? {
+        minimize: () => invoke('window_minimize'),
+        toggleMaximize: () => invoke('window_toggle_maximize'),
+        close: () => invoke('window_close'),
+      }
+      : undefined,
+
     onFileDrop(handlers) {
       getCurrentWebview().onDragDropEvent((event) => {
         // 'over' fires continuously with the cursor position; only the

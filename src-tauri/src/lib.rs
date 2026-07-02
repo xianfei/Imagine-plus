@@ -86,6 +86,13 @@ pub fn run() {
                     .traffic_light_position(tauri::LogicalPosition::new(20.0, 17.0));
             }
 
+            // Windows: no titleBarOverlay equivalent — frameless window
+            // with custom controls drawn in the action bar
+            #[cfg(target_os = "windows")]
+            {
+                win_builder = win_builder.decorations(false).shadow(true);
+            }
+
             let window = win_builder.build()?;
 
             #[cfg(debug_assertions)]
@@ -118,6 +125,9 @@ pub fn run() {
             commands::about,
             commands::set_progress_bar,
             commands::open_external,
+            commands::window_minimize,
+            commands::window_toggle_maximize,
+            commands::window_close,
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")

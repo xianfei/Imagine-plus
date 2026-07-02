@@ -23,4 +23,14 @@ export interface ImagineAPI {
    * HTML5 drop handler still works
    */
   onFileDrop?(handlers: IFileDropHandlers): void
+
+  /**
+   * custom window buttons; only present where the platform offers no
+   * native overlay controls (Tauri on Windows)
+   */
+  windowControls?: {
+    minimize(): void
+    toggleMaximize(): void
+    close(): void
+  }
 }
