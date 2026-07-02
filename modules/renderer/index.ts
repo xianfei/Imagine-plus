@@ -8,8 +8,10 @@ import subscribe from './store/subscribe'
 import listenIpc from './ipc/listen'
 import { imagineAPI, bridgeReady } from '../bridge/web'
 import { setup as setupLocales } from '../locales'
+import { getSettings } from './store/storage'
 
-setupLocales(navigator.language)
+const { language } = getSettings()
+setupLocales(language && language !== 'auto' ? language : navigator.language)
 
 bridgeReady.then(() => {
   const runner = new JobRunner()

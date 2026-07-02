@@ -1,0 +1,125 @@
+.settings-modal {
+  .modal {
+    background: #f7f7f7;
+  }
+}
+
+.settings-page {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  padding: 50px 0 40px;
+
+  h1 {
+    max-width: 560px;
+    margin: 0 auto 10px;
+    padding: 0 24px;
+    font-size: 22px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  section {
+    max-width: 560px;
+    margin: 0 auto 18px;
+    padding: 4px 24px 14px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+    h2 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #444;
+      margin: 14px 0 2px;
+    }
+
+    .section-desc {
+      font-size: 12px;
+      color: #999;
+      margin: 0 0 8px;
+    }
+  }
+
+  .settings-row {
+    display: flex;
+    align-items: center;
+    min-height: 36px;
+    border-top: 1px solid #f0f0f0;
+    font-size: 13px;
+    color: #555;
+
+    &:first-of-type {
+      border-top: 0;
+    }
+
+    .row-label {
+      width: 70px;
+      flex-shrink: 0;
+      font-weight: 500;
+    }
+
+    label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+
+      input[type='checkbox'] {
+        margin-right: 8px;
+      }
+    }
+
+    .image-options {
+      display: flex;
+      align-items: center;
+      flex: 1;
+    }
+
+    .select {
+      min-width: 120px;
+    }
+  }
+
+  footer {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .apply-button {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: 0;
+      border-radius: 6px;
+      padding: 8px 14px;
+      background: #5788c0;
+      color: #fff;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.15s;
+
+      &:hover {
+        background: #4a78ac;
+      }
+
+      .icon {
+        width: 16px;
+        height: 16px;
+      }
+    }
+
+    .app-version {
+      font-size: 12px;
+      color: #aaa;
+      cursor: pointer;
+
+      &:hover {
+        color: #5788c0;
+      }
+    }
+  }
+}

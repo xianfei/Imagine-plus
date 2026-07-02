@@ -6,7 +6,6 @@ import Icon from '../components/Icon'
 import Popper from '../components/Popper'
 import Tooltip from '../components/Tooltip'
 import WindowControls from '../components/WindowControls'
-import OptionsPanel from './OptionsPanel'
 import ResizePanel from './ResizePanel'
 import actions from '../store/actionCreaters'
 import { SaveType, IUpdateInfo, IState } from '../../common/types'
@@ -55,10 +54,6 @@ function ActionBar({
   const handleOptionsVisibleClick = () => {
     onOptionsVisibleToggle(!optionsVisible)
   }
-
-  const handleOptionsHide = useCallback(() => {
-    onOptionsVisibleToggle(false)
-  }, [onOptionsVisibleToggle])
 
   const handleResizePanelClose = useCallback(() => {
     setResizePanelVisible(false)
@@ -217,25 +212,17 @@ function ActionBar({
         </Tooltip>
       </Popper>
 
-      <Popper
-        className="options-popper actionbar-popper"
-        visible={optionsVisible}
-        popper={(
-          <OptionsPanel onApplyClick={handleOptionsHide} />
-        )}
-      >
-        <Tooltip title="Settings" placement="bottom">
-          <button
-            type="button"
-            className={classnames({
-              '-active': optionsVisible,
-            })}
-            onClick={handleOptionsVisibleClick}
-          >
-            <Icon name="tune" />
-          </button>
-        </Tooltip>
-      </Popper>
+      <Tooltip title={__('settings')} placement="bottom">
+        <button
+          type="button"
+          className={classnames({
+            '-active': optionsVisible,
+          })}
+          onClick={handleOptionsVisibleClick}
+        >
+          <Icon name="tune" />
+        </button>
+      </Tooltip>
 
       <WindowControls />
     </div>

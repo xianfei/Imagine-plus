@@ -4,6 +4,7 @@ import { Provider } from 'react-redux'
 import List from './containers/List'
 import ActionBar from './containers/ActionBar'
 import Alone from './containers/Alone'
+import Settings from './containers/Settings'
 import { prevent } from './utils/dom-event'
 import store from './store/store'
 import * as apis from './apis'
@@ -83,6 +84,7 @@ class App extends PureComponent<Record<string, never>, { onion: number }> {
           <List />
         </div>
         <Alone />
+        <Settings />
       </Provider>
     )
   }
