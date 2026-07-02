@@ -68,11 +68,13 @@ npm run tauri:build  # package (bundle in src-tauri/target/release/bundle)
 cd src-tauri && cargo test   # image pipeline tests
 ```
 
-Known gaps vs the Electron build: HEIC/AVIF *input* is currently macOS-only
-(Windows WIC / webview fallback planned), interlaced PNG output is not
-supported, and PNG quantization quality is slightly below pngquant —
-[libimagequant](https://github.com/ImageOptim/libimagequant) (GPL-3.0 or
-commercial) would close that gap if the license is acceptable.
+PNG quantization uses
+[libimagequant](https://github.com/ImageOptim/libimagequant) (the pngquant
+engine). Note that libimagequant is **GPL-3.0-or-later**, so distributed
+builds of the Tauri edition are effectively GPL-3.0 licensed.
+
+Known gaps vs the Electron build: interlaced PNG output is not supported
+(the png crate encoder cannot write Adam7).
 
 ## Built on
 

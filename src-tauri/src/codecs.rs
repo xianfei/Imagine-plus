@@ -74,30 +74,41 @@ pub fn encode_jpeg(rgba: &RgbaImage, quality: u8, progressive: bool) -> Result<V
     .map_err(|_| "mozjpeg panicked".to_string())?
 }
 
-/// Palette-quantized PNG matching sharp's `colors` option.
-/// Opaque images go through quantette (Wu + k-means refinement +
-/// Floyd-Steinberg); images with transparency use NeuQuant, which
-/// supports RGBA palettes (quantette is opaque-only).
+/// Palette-quantized PNG matching sharp's `colors` option, via
+/// libimagequant — the same engine sharp/pngquant use, with full RGBA
+/// palette + Floyd-Steinberg dithering support (GPL-3.0-or-later).
 /// Note: interlaced/progressive PNG output is not supported by the
 /// png crate encoder; the option is ignored (divergence from sharp).
 pub fn encode_png(rgba: &RgbaImage, colors: u32) -> Result<Vec<u8>, String> {
     let (width, height) = rgba.dimensions();
     let colors = colors.clamp(2, 256);
-    let has_alpha = rgba.pixels().any(|p| p.0[3] != 255);
 
-    let (palette, trns, indices) = if has_alpha {
-        quantize_neuquant(rgba, colors)
-    } else {
-        quantize_quantette(rgba, colors)?
-    };
+    let mut attr = imagequant::new();
+    attr.set_max_colors(colors).map_err(|e| e.to_string())?;
+
+    let pixels: &[imagequant::RGBA] = rgba.as_raw().as_rgba();
+    let mut img = attr
+        .new_image_borrowed(pixels, width as usize, height as usize, 0.0)
+        .map_err(|e| e.to_string())?;
+
+    let mut result = attr.quantize(&mut img).map_err(|e| e.to_string())?;
+    result
+        .set_dithering_level(1.0)
+        .map_err(|e| e.to_string())?;
+
+    let (palette, indices) = result.remapped(&mut img).map_err(|e| e.to_string())?;
+
+    let palette_flat: Vec<u8> = palette.iter().flat_map(|c| [c.r, c.g, c.b]).collect();
+    let has_alpha = palette.iter().any(|c| c.a != 255);
+    let trns: Vec<u8> = palette.iter().map(|c| c.a).collect();
 
     let mut out = Vec::new();
     {
         let mut encoder = png::Encoder::new(&mut out, width, height);
         encoder.set_color(png::ColorType::Indexed);
         encoder.set_depth(png::BitDepth::Eight);
-        encoder.set_palette(palette);
-        if let Some(trns) = trns {
+        encoder.set_palette(palette_flat);
+        if has_alpha {
             encoder.set_trns(trns);
         }
         encoder.set_compression(png::Compression::High);
@@ -107,60 +118,6 @@ pub fn encode_png(rgba: &RgbaImage, colors: u32) -> Result<Vec<u8>, String> {
     }
 
     Ok(out)
-}
-
-fn quantize_quantette(
-    rgba: &RgbaImage,
-    colors: u32,
-) -> Result<(Vec<u8>, Option<Vec<u8>>, Vec<u8>), String> {
-    use quantette::deps::palette::Srgb;
-    use quantette::dither::FloydSteinberg;
-    use quantette::{PaletteSize, Pipeline, QuantizeMethod};
-
-    let pixels: Vec<Srgb<u8>> = rgba
-        .pixels()
-        .map(|p| Srgb::new(p.0[0], p.0[1], p.0[2]))
-        .collect();
-
-    let (width, height) = rgba.dimensions();
-    let image = quantette::ImageRef::new(width, height, &pixels).map_err(|e| e.to_string())?;
-
-    let palette_size = PaletteSize::try_from(colors as u16).map_err(|e| e.to_string())?;
-
-    let indexed = Pipeline::new()
-        .palette_size(palette_size)
-        .quantize_method(QuantizeMethod::kmeans())
-        .ditherer(FloydSteinberg::new())
-        .parallel(true)
-        .input_image(image)
-        .output_srgb8_indexed_image();
-
-    let (palette, indices) = indexed.into_parts();
-    let palette_flat: Vec<u8> = palette
-        .iter()
-        .flat_map(|c| [c.red, c.green, c.blue])
-        .collect();
-
-    Ok((palette_flat, None, indices))
-}
-
-fn quantize_neuquant(rgba: &RgbaImage, colors: u32) -> (Vec<u8>, Option<Vec<u8>>, Vec<u8>) {
-    let raw = rgba.as_raw();
-    let nq = color_quant::NeuQuant::new(10, colors as usize, raw);
-
-    let palette_rgba = nq.color_map_rgba();
-    let palette: Vec<u8> = palette_rgba
-        .chunks_exact(4)
-        .flat_map(|c| [c[0], c[1], c[2]])
-        .collect();
-    let trns: Vec<u8> = palette_rgba.chunks_exact(4).map(|c| c[3]).collect();
-
-    let indices: Vec<u8> = raw
-        .chunks_exact(4)
-        .map(|px| nq.index_of(px) as u8)
-        .collect();
-
-    (palette, Some(trns), indices)
 }
 
 /// Lossy WebP via libwebp (statically linked).
