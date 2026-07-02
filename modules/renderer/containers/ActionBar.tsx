@@ -112,7 +112,7 @@ function ActionBar({
   }, [savePopperVisible, clearPopperVisible])
 
   return (
-    <div data-tauri-drag-region className="action-bar" style={{ paddingLeft: navigator.platform.startsWith('Mac') ? "78px" : "0", paddingRight: navigator.platform.startsWith('Win') ? "150px" : "10px" }}>
+    <div data-tauri-drag-region="deep" className="action-bar" style={{ paddingLeft: navigator.platform.startsWith('Mac') ? "78px" : "0", paddingRight: navigator.platform.startsWith('Win') ? "150px" : "10px" }}>
 
 
       <Tooltip title={__('add')} placement="bottom">
@@ -191,13 +191,13 @@ function ActionBar({
         ) : null
       }
 
-      {/* data-tauri-drag-region only applies to the exact mousedown target,
-          so every non-interactive element covering bar area needs it */}
-      <span data-tauri-drag-region className='title-app-name'>Imagine Plus</span>
+      {/* the bar root uses data-tauri-drag-region="deep": the whole
+          subtree drags, clickable elements are excluded automatically */}
+      <span className='title-app-name'>Imagine Plus</span>
 
       {/* <span className='title-app-version' onClick={()=>imagineAPI.ipcSend('about', 1)}>v{pkg.version}</span> */}
 
-      <div data-tauri-drag-region className="blank" />
+      <div className="blank" />
 
       <Popper
         className="options-popper actionbar-popper"
