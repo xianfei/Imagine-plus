@@ -1,0 +1,40 @@
+.window-controls {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 50px;
+  display: flex;
+  z-index: 20;
+
+  button {
+    width: 46px;
+    height: 100%;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    transition: background 0.15s, color 0.15s;
+
+    svg {
+      width: 10px;
+      height: 10px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.1;
+    }
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.06);
+      color: #000;
+    }
+
+    &.-close:hover {
+      // Windows convention: red close button
+      background: #e81123;
+      color: #fff;
+    }
+  }
+}

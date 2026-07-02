@@ -1,11 +1,10 @@
-// @ts-nocheck
 import React, { useCallback, useState, useEffect } from 'react'
 import { connect } from 'react-redux'
 import classnames from 'classnames'
 import Icon from '../components/Icon'
 import Popper from '../components/Popper'
 import Tooltip from '../components/Tooltip'
-import OptionsPanel from './OptionsPanel'
+import WindowControls from '../components/WindowControls'
 import ResizePanel from './ResizePanel'
 import actions from '../store/actionCreaters'
 import { SaveType, IUpdateInfo, IState } from '../../common/types'
@@ -54,10 +53,6 @@ function ActionBar({
   const handleOptionsVisibleClick = () => {
     onOptionsVisibleToggle(!optionsVisible)
   }
-
-  const handleOptionsHide = useCallback(() => {
-    onOptionsVisibleToggle(false)
-  }, [onOptionsVisibleToggle])
 
   const handleResizePanelClose = useCallback(() => {
     setResizePanelVisible(false)
@@ -111,8 +106,7 @@ function ActionBar({
   }, [savePopperVisible, clearPopperVisible])
 
   return (
-    <div className="action-bar" style={{ paddingLeft: navigator.platform.startsWith('Mac') ? "78px" : "0", paddingRight: navigator.platform.startsWith('Win') ? "150px" : "10px" }}>
-
+    <div data-tauri-drag-region="deep" className="action-bar" style={{ paddingLeft: navigator.platform.startsWith('Mac') ? '78px' : '0', paddingRight: navigator.platform.startsWith('Win') ? '150px' : '10px' }}>
 
       <Tooltip title={__('add')} placement="bottom">
         <button type="button" onClick={onAdd}>
@@ -122,7 +116,7 @@ function ActionBar({
 
       <Popper
         visible={savePopperVisible}
-        className='actionbar-popper'
+        className="actionbar-popper"
         popper={(
           <div className="popper-menu">
             <button type="button" onClick={() => handleSaveAction(SaveType.OVER)}>
@@ -152,7 +146,7 @@ function ActionBar({
 
       <Popper
         visible={clearPopperVisible}
-        className='actionbar-popper'
+        className="actionbar-popper"
         popper={(
           <div className="popper-menu">
             <button type="button" onClick={() => handleClearAction(onRemoveAll)}>
@@ -190,7 +184,9 @@ function ActionBar({
         ) : null
       }
 
-      <span className='title-app-name'>Imagine Plus</span>
+      {/* the bar root uses data-tauri-drag-region="deep": the whole
+          subtree drags, clickable elements are excluded automatically */}
+      <span className="title-app-name">Imagine Plus</span>
 
       {/* <span className='title-app-version' onClick={()=>imagineAPI.ipcSend('about', 1)}>v{pkg.version}</span> */}
 
@@ -214,25 +210,19 @@ function ActionBar({
         </Tooltip>
       </Popper>
 
-      <Popper
-        className="options-popper actionbar-popper"
-        visible={optionsVisible}
-        popper={(
-          <OptionsPanel onApplyClick={handleOptionsHide} />
-        )}
-      >
-        <Tooltip title="Settings" placement="bottom">
-          <button
-            type="button"
-            className={classnames({
-              '-active': optionsVisible,
-            })}
-            onClick={handleOptionsVisibleClick}
-          >
-            <Icon name="tune" />
-          </button>
-        </Tooltip>
-      </Popper>
+      <Tooltip title={__('settings')} placement="bottom">
+        <button
+          type="button"
+          className={classnames({
+            '-active': optionsVisible,
+          })}
+          onClick={handleOptionsVisibleClick}
+        >
+          <Icon name="tune" />
+        </button>
+      </Tooltip>
+
+      <WindowControls />
     </div>
   )
 }

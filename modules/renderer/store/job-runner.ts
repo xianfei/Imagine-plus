@@ -2,18 +2,23 @@ import { Store } from 'redux'
 import { debounce } from 'lodash'
 import { TaskStatus, IState } from '../../common/types'
 import actions from './actionCreaters'
+import { getSettings } from './storage'
 import { imagineAPI } from '../../bridge/web'
 
-const maxRunningNum = Math.max((navigator.hardwareConcurrency || 2) - 1, 1)
+const autoMaxRunningNum = Math.max((navigator.hardwareConcurrency || 2) - 1, 1)
+
+// user-configurable in Settings; 0/undefined = auto
+const maxRunningNum = () => getSettings().concurrency || autoMaxRunningNum
 
 export default class JobRunner {
   private runningNum = 0
+
   private maxTaskNum = 0
 
   private store?: Store<IState>
 
   trigger = debounce(() => {
-    if (this.runningNum >= maxRunningNum) return
+    if (this.runningNum >= maxRunningNum()) return
     this.start()
   }, 100)
 
@@ -31,15 +36,12 @@ export default class JobRunner {
 
     if (taskCount === 0) {
       this.maxTaskNum = 0
-      // @ts-ignore
       imagineAPI?.ipcSend('setProgressBar', -1)
     } else {
       this.maxTaskNum = Math.max(this.maxTaskNum, taskCount)
       const progress = 1 - taskCount / this.maxTaskNum
-      // @ts-ignore
       imagineAPI?.ipcSend('setProgressBar', progress)
     }
-
   }
 
   private pickPendingTask() {

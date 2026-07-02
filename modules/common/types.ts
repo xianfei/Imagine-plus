@@ -1,7 +1,10 @@
-import type { UpdateInfo } from 'electron-updater'
-
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type Empty = {}
+
+/** minimal update descriptor (formerly electron-updater's UpdateInfo) */
+export interface IUpdateInfo {
+  version: string
+}
 
 export enum ResizeMode {
   LONG_EDGE = 'LONG_EDGE',
@@ -111,8 +114,6 @@ export interface IBackendState {
   aloneMode: boolean
 }
 
-export type IUpdateInfo = UpdateInfo
-
 export interface IDefaultOptions {
   jpg: IOptimizeOptions
   png: IOptimizeOptions
@@ -124,7 +125,7 @@ export interface IDefaultOptions {
 
 export interface IGlobals {
   activeId?: string
-  updateInfo?: UpdateInfo
+  updateInfo?: IUpdateInfo
   optionsVisible: boolean
   defaultOptions: IDefaultOptions
   resizeOptions: IResizeOptions
@@ -146,11 +147,15 @@ export interface RendererIpcPayload {
     type: SaveType;
   };
   [IpcChannel.SYNC]: IBackendState;
+  setProgressBar: number;
+  about: number;
+  'store-set': { key: string, value: unknown };
+  'store-get': { key: string, def?: unknown };
 }
 
 export interface MainIpcPayload {
   [IpcChannel.SAVE]: SaveType;
   [IpcChannel.SAVED]: SaveType;
   [IpcChannel.FILE_SELECTED]: IImageFile[];
-  [IpcChannel.APP_UPDATE]: UpdateInfo;
+  [IpcChannel.APP_UPDATE]: IUpdateInfo;
 }

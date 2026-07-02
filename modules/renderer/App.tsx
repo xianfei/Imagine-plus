@@ -4,9 +4,11 @@ import { Provider } from 'react-redux'
 import List from './containers/List'
 import ActionBar from './containers/ActionBar'
 import Alone from './containers/Alone'
+import Settings from './containers/Settings'
 import { prevent } from './utils/dom-event'
 import store from './store/store'
 import * as apis from './apis'
+import { imagineAPI } from '../bridge/web'
 
 import './components/Icon'
 import './App.less'
@@ -20,34 +22,25 @@ class App extends PureComponent<Record<string, never>, { onion: number }> {
     }
   }
 
-  handleDragEnter = () => {
-    this.setState((state) => ({
-      onion: state.onion + 1,
-    }))
-  }
-
-  handleDragLeave = () => {
-    this.setState((state) => ({
-      onion: state.onion - 1,
-    }))
+  componentDidMount() {
+    // OS file drags arrive through Tauri's native drag-drop events with
+    // absolute paths (the webview suppresses DOM drops for them); the
+    // DOM handlers below only guard against in-page drags
+    imagineAPI?.onFileDrop?.({
+      onEnter: () => this.setState({ onion: 1 }),
+      onLeave: () => this.setState({ onion: 0 }),
+      onDrop: (paths) => {
+        this.setState({ onion: 0 })
+        apis.fileAdd(paths)
+      },
+    })
   }
 
   handleDragDrop = (e: DragEvent<HTMLDivElement>) => {
-    this.setState({
-      onion: 0,
-    })
-
-    console.log(e.dataTransfer.files)
-
-    const files = Array.from(e.dataTransfer.files)
-      .filter((file) => !file.type || /png|jpeg|webp|avif|heic|bmp/.test(file.type))
-      .map((file) => file.path)
-
-    apis.fileAdd(files)
-
-    e.preventDefault();
-    e.dataTransfer.effectAllowed = 'none';
-    e.dataTransfer.dropEffect = 'none';
+    // block the webview from navigating to a dropped resource
+    e.preventDefault()
+    e.dataTransfer.effectAllowed = 'none'
+    e.dataTransfer.dropEffect = 'none'
   }
 
   render() {
@@ -60,14 +53,13 @@ class App extends PureComponent<Record<string, never>, { onion: number }> {
             '-drag': !!onion,
           })}
           onDragOver={prevent}
-          onDragEnter={this.handleDragEnter}
-          onDragLeave={this.handleDragLeave}
           onDrop={this.handleDragDrop}
         >
           <ActionBar />
           <List />
         </div>
         <Alone />
+        <Settings />
       </Provider>
     )
   }

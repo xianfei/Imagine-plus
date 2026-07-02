@@ -1,0 +1,161 @@
+.settings-modal {
+  .modal {
+    background: #f7f7f7;
+  }
+}
+
+.settings-page {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  padding: 66px 0 40px;
+
+  .settings-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 54px;
+    display: flex;
+    align-items: center;
+    padding-right: 20px;
+    background: #f7f7f7;
+    z-index: 5;
+
+    h1 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      pointer-events: none;
+    }
+
+    .apply-button {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: 0;
+      border-radius: 6px;
+      padding: 7px 12px;
+      background: #5788c0;
+      color: #fff;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.15s;
+
+      &:hover {
+        background: #4a78ac;
+      }
+
+      .icon {
+        width: 15px;
+        height: 15px;
+      }
+    }
+  }
+
+  section {
+    max-width: 560px;
+    margin: 0 auto 18px;
+    padding: 4px 24px 14px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+    h2 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #444;
+      margin: 14px 0 2px;
+    }
+
+    .section-desc {
+      font-size: 12px;
+      color: #999;
+      margin: 0 0 8px;
+    }
+  }
+
+  .format-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 36px;
+
+    // the first visual row spans two cells
+    .settings-row:nth-child(-n + 2) {
+      border-top: 0;
+    }
+
+    // the compact task-card select style doesn't fit a settings form
+    .select-ext-type {
+      flex: 1;
+      width: auto;
+      font-size: 13px;
+      scale: 1;
+
+      select {
+        text-align: start !important;
+      }
+    }
+  }
+
+  .settings-row {
+    display: flex;
+    align-items: center;
+    min-height: 36px;
+    border-top: 1px solid #f0f0f0;
+    font-size: 13px;
+    color: #555;
+
+    &:first-of-type {
+      border-top: 0;
+    }
+
+    .row-label {
+      width: 70px;
+      flex-shrink: 0;
+      font-weight: 500;
+    }
+
+    label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+
+      input[type='checkbox'] {
+        margin-right: 8px;
+      }
+    }
+
+    .image-options {
+      display: flex;
+      align-items: center;
+      flex: 1;
+    }
+
+    .select {
+      min-width: 120px;
+    }
+  }
+
+  footer {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    .app-version {
+      font-size: 12px;
+      color: #aaa;
+      cursor: pointer;
+
+      &:hover {
+        color: #5788c0;
+      }
+    }
+  }
+}

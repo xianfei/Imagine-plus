@@ -1,0 +1,43 @@
+[package]
+name = "imagine-plus"
+version = "0.10.0"
+description = "PNG/JPEG/WebP/AVIF image optimization app"
+authors = ["meowtec <bertonzh@gmail.com>", "xianfei <xianfei@bupt.cn>"]
+license = "ISC"
+repository = "https://github.com/xianfei/Imagine-plus"
+edition = "2021"
+
+[lib]
+name = "imagine_plus_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["protocol-asset", "devtools"] }
+tauri-plugin-dialog = "2"
+tauri-plugin-opener = "2"
+tauri-plugin-single-instance = "2"
+tauri-plugin-log = "2"
+log = "0.4"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+md-5 = "0.10"
+hex = "0.4"
+infer = "0.16"
+image = { version = "0.25", default-features = false, features = ["png", "jpeg", "webp", "bmp"] }
+webp = "0.3"
+mozjpeg = "0.10.13"
+fast_image_resize = "6.0.0"
+ravif = "0.13.0"
+rgb = "0.8.53"
+img-parts = "0.4.0"
+png = "0.18.1"
+qcms = "0.3.0"
+imagequant = "4.4.1"
+
+[profile.release]
+strip = true
+lto = true
+codegen-units = 1

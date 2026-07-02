@@ -1,5 +1,5 @@
-import log from 'electron-log'
-
-// disabled electron-log
-log.transports.file.level = false
-log.transports.console.level = false
+/**
+ * shared test setup; kept for the import side effect
+ * (previously silenced electron-log, which is gone)
+ */
+export {}

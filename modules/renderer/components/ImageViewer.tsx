@@ -1,11 +1,11 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 import React, { PureComponent } from 'react'
 import classnames from 'classnames'
+import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider'
 import { getWheelFromEvent, eventOffset } from '../utils/dom-event'
 import { coop } from '../../common/utils'
 import RadioGroup from './RadioGroup'
 import Icon from './Icon'
-import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider'
 
 import './ImageViewer.less'
 
@@ -50,8 +50,6 @@ export default class ImageViewer extends PureComponent<ImageViewerProps, ImageVi
   private image: HTMLImageElement | null = null
 
   private backdrop: HTMLDivElement | null = null
-
-  private imageCompare: any | null = null
 
   private prevScreenX = 0
 
@@ -217,7 +215,9 @@ export default class ImageViewer extends PureComponent<ImageViewerProps, ImageVi
       imageError,
     } = this.state
 
-    const { compareMode, beforeSrc, afterSrc, src } = this.props
+    const {
+      compareMode, beforeSrc, afterSrc, src,
+    } = this.props
 
     if (imageError) {
       return <div className="image-fail">FAILED</div>
@@ -231,36 +231,35 @@ export default class ImageViewer extends PureComponent<ImageViewerProps, ImageVi
           }}
         >
           <ReactCompareSlider
-            ref={(el) => { this.imageCompare = el }}
-            itemOne={
-              <ReactCompareSliderImage 
-                src={beforeSrc} 
+            itemOne={(
+              <ReactCompareSliderImage
+                src={beforeSrc}
                 alt="Before optimization"
                 style={{ objectFit: 'contain' }}
               />
-            }
-            itemTwo={
-              <ReactCompareSliderImage 
-                src={afterSrc} 
+            )}
+            itemTwo={(
+              <ReactCompareSliderImage
+                src={afterSrc}
                 alt="After optimization"
                 style={{ objectFit: 'contain' }}
               />
-            }
-            onlyHandleDraggable={true}
+            )}
+            onlyHandleDraggable
             style={{ width: '100%', height: '100%' }}
           />
           <img
-          className="image -transition"
-          src={src}
-          onLoad={this.handleImageLoad}
-          onError={this.handleImageError}
-          ref={(el) => { this.image = el }}
-          style={{
-            display: 'none'
-          }}
-        />
+            className="image -transition"
+            src={src}
+            onLoad={this.handleImageLoad}
+            onError={this.handleImageError}
+            ref={(el) => { this.image = el }}
+            style={{
+              display: 'none',
+            }}
+          />
         </div>
-        
+
       )
     }
 

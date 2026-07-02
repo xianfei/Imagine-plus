@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState } from 'react'
 import { connect } from 'react-redux'
 import { IResizeOptions, ResizeMode, IState } from '../../common/types'
@@ -21,7 +20,9 @@ interface IProps {
   onClose(): void
 }
 
-function ResizePanel({ resizeOptions, onApply, onClear, onClose }: IProps) {
+function ResizePanel({
+  resizeOptions, onApply, onClear, onClose,
+}: IProps) {
   const [mode, setMode] = useState<ResizeMode>(resizeOptions.mode)
   const [values, setValues] = useState<Record<ResizeMode, number>>({
     [ResizeMode.LONG_EDGE]: resizeOptions.mode === ResizeMode.LONG_EDGE ? resizeOptions.value : MODE_DEFAULTS[ResizeMode.LONG_EDGE],

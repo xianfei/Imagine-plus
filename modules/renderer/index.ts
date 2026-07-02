@@ -6,19 +6,23 @@ import { IpcChannel } from '../common/types'
 import JobRunner from './store/job-runner'
 import subscribe from './store/subscribe'
 import listenIpc from './ipc/listen'
-import { imagineAPI } from '../bridge/web'
+import { imagineAPI, bridgeReady } from '../bridge/web'
 import { setup as setupLocales } from '../locales'
+import { getSettings } from './store/storage'
 
-setupLocales(navigator.language)
+const { language } = getSettings()
+setupLocales(language && language !== 'auto' ? language : navigator.language)
 
-const runner = new JobRunner()
-runner.watch(store)
-subscribe(store)
-listenIpc()
+bridgeReady.then(() => {
+  const runner = new JobRunner()
+  runner.watch(store)
+  subscribe(store)
+  listenIpc()
 
-imagineAPI?.ipcSend(IpcChannel.READY, null)
+  imagineAPI?.ipcSend(IpcChannel.READY, null)
 
-ReactDOM.render(
-  React.createElement(App),
-  document.getElementById('app'),
-)
+  ReactDOM.render(
+    React.createElement(App),
+    document.getElementById('app'),
+  )
+})
