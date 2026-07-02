@@ -50,6 +50,30 @@ npm install
 npm run dev
 ```
 
+## Tauri edition (this branch, experimental)
+
+This branch also contains a [Tauri 2](https://v2.tauri.app/) rewrite: the
+Electron main process is ported to Rust (`src-tauri/`) and image processing
+runs on a statically linked Rust codec stack instead of sharp — mozjpeg for
+JPEG (same encoder sharp uses), quantette/NeuQuant palette quantization for
+PNG, libwebp for WebP, ravif (rav1e) for AVIF, macOS ImageIO for HEIC/AVIF
+decode, and fast_image_resize for SIMD Lanczos3 resizing. EXIF/ICC metadata
+is preserved via img-parts. Everything is compiled into a single binary:
+the macOS app bundle is ~9 MB (vs ~100 MB+ for the Electron build).
+
+```bash
+npm install
+npm run tauri:dev    # develop (requires Rust toolchain)
+npm run tauri:build  # package (bundle in src-tauri/target/release/bundle)
+cd src-tauri && cargo test   # image pipeline tests
+```
+
+Known gaps vs the Electron build: HEIC/AVIF *input* is currently macOS-only
+(Windows WIC / webview fallback planned), interlaced PNG output is not
+supported, and PNG quantization quality is slightly below pngquant —
+[libimagequant](https://github.com/ImageOptim/libimagequant) (GPL-3.0 or
+commercial) would close that gap if the license is acceptable.
+
 ## Built on
 
  - [sharp](https://github.com/lovell/sharp): High performance Node.js image processing, the fastest module to resize JPEG, PNG, WebP, AVIF and TIFF images. Uses the libvips library.

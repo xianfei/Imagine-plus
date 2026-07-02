@@ -1,7 +1,10 @@
+mod codecs;
 mod commands;
 mod config_store;
 mod files;
 mod menu;
+mod metadata;
+mod native_decode;
 mod pipeline;
 mod types;
 

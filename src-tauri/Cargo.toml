@@ -28,6 +28,14 @@ hex = "0.4"
 infer = "0.16"
 image = { version = "0.25", default-features = false, features = ["png", "jpeg", "webp", "bmp"] }
 webp = "0.3"
+mozjpeg = "0.10.13"
+quantette = "0.6.0"
+color_quant = "2.0.0"
+fast_image_resize = "6.0.0"
+ravif = "0.13.0"
+rgb = "0.8.53"
+img-parts = "0.4.0"
+png = "0.18.1"
 
 [profile.release]
 strip = true
