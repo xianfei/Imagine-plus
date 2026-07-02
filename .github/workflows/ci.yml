@@ -50,6 +50,9 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
 
+      # rav1e's x86_64 SIMD assembly is built with NASM
+      - uses: ilammy/setup-nasm@v1
+
       - uses: swatinem/rust-cache@v2
         with:
           workspaces: src-tauri

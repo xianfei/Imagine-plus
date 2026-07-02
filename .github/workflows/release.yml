@@ -42,6 +42,10 @@ jobs:
           # both mac architectures build from the same runner
           targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
+      # rav1e's x86_64 SIMD assembly is built with NASM (needed for the
+      # Linux, Windows and mac x86_64 targets)
+      - uses: ilammy/setup-nasm@v1
+
       - uses: swatinem/rust-cache@v2
         with:
           workspaces: src-tauri
