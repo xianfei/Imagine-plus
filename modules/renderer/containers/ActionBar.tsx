@@ -111,7 +111,7 @@ function ActionBar({
   }, [savePopperVisible, clearPopperVisible])
 
   return (
-    <div className="action-bar" style={{ paddingLeft: navigator.platform.startsWith('Mac') ? "78px" : "0", paddingRight: navigator.platform.startsWith('Win') ? "150px" : "10px" }}>
+    <div data-tauri-drag-region className="action-bar" style={{ paddingLeft: navigator.platform.startsWith('Mac') ? "78px" : "0", paddingRight: navigator.platform.startsWith('Win') ? "150px" : "10px" }}>
 
 
       <Tooltip title={__('add')} placement="bottom">

@@ -3,6 +3,12 @@ import {
   AsyncCall, IImageFile, IOptimizeRequest, MainIpcPayload, RendererIpcPayload,
 } from '../common/types'
 
+export interface IFileDropHandlers {
+  onEnter(): void
+  onLeave(): void
+  onDrop(paths: string[]): void
+}
+
 export interface ImagineAPI {
   logger: ElectronLog
   ipcSend<T extends keyof RendererIpcPayload>(channel: T, payload: RendererIpcPayload[T]): void,
@@ -10,4 +16,11 @@ export interface ImagineAPI {
   ipcListen<T extends keyof MainIpcPayload>(channel: T, listener: (payload: MainIpcPayload[T]) => void): void
   optimize: AsyncCall<IOptimizeRequest, IImageFile>
   openExternal(link: string): void;
+
+  /**
+   * native file drag-drop with absolute paths; implemented by the Tauri
+   * bridge (webviews expose no File.path), absent in Electron where the
+   * HTML5 drop handler still works
+   */
+  onFileDrop?(handlers: IFileDropHandlers): void
 }

@@ -7,6 +7,7 @@ import Alone from './containers/Alone'
 import { prevent } from './utils/dom-event'
 import store from './store/store'
 import * as apis from './apis'
+import { imagineAPI } from '../bridge/web'
 
 import './components/Icon'
 import './App.less'
@@ -18,6 +19,20 @@ class App extends PureComponent<Record<string, never>, { onion: number }> {
     this.state = {
       onion: 0,
     }
+  }
+
+  componentDidMount() {
+    // Tauri delivers native paths through its own drag-drop events and
+    // suppresses OS file drops on the DOM, so the HTML5 handlers below
+    // only ever fire in Electron
+    imagineAPI?.onFileDrop?.({
+      onEnter: () => this.setState({ onion: 1 }),
+      onLeave: () => this.setState({ onion: 0 }),
+      onDrop: (paths) => {
+        this.setState({ onion: 0 })
+        apis.fileAdd(paths)
+      },
+    })
   }
 
   handleDragEnter = () => {
