@@ -103,24 +103,34 @@ function Settings(props: IProps & IDispatchProps) {
   return (
     <Modal className="settings-modal" visible={visible} onClose={onClose}>
       <div className="settings-page">
-        <h1>{__('settings')}</h1>
+        {/* header shares the row with the modal back button (and keeps
+            the window draggable while settings cover the action bar) */}
+        <header
+          data-tauri-drag-region="deep"
+          className="settings-header"
+          style={{ paddingLeft: navigator.platform.startsWith('Mac') ? '135px' : '55px' }}
+        >
+          <h1>{__('settings')}</h1>
+        </header>
 
         <section>
           <h2>{__('format_mapping')}</h2>
           <p className="section-desc">{__('format_mapping_desc')}</p>
-          {INPUT_EXTS.map(({ ext, label }) => (
-            <div className="settings-row" key={ext}>
-              <span className="row-label">{label}</span>
-              <TargetTypeSelect
-                sourceExt={ext}
-                targetExt={optionsMap[ext]?.exportExt || ext}
-                onChange={(exportExt) => onOptionsChange(ext, {
-                  ...optionsMap[ext],
-                  exportExt,
-                })}
-              />
-            </div>
-          ))}
+          <div className="format-grid">
+            {INPUT_EXTS.map(({ ext, label }) => (
+              <div className="settings-row" key={ext}>
+                <span className="row-label">{label}</span>
+                <TargetTypeSelect
+                  sourceExt={ext}
+                  targetExt={optionsMap[ext]?.exportExt || ext}
+                  onChange={(exportExt) => onOptionsChange(ext, {
+                    ...optionsMap[ext],
+                    exportExt,
+                  })}
+                />
+              </div>
+            ))}
+          </div>
         </section>
 
         <section>

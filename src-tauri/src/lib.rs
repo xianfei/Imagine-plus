@@ -83,7 +83,8 @@ pub fn run() {
                 win_builder = win_builder
                     .title_bar_style(tauri::TitleBarStyle::Overlay)
                     .hidden_title(true)
-                    .traffic_light_position(tauri::LogicalPosition::new(20.0, 17.0));
+                    // vertically centers the 12px buttons in the 50px bar
+                    .traffic_light_position(tauri::LogicalPosition::new(20.0, 19.0));
             }
 
             // Windows: no titleBarOverlay equivalent — frameless window
