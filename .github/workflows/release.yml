@@ -65,3 +65,18 @@ jobs:
           releaseDraft: false
           prerelease: false
           args: ${{ matrix.args }}
+
+      # portable (no-install) build: the bare exe with embedded assets;
+      # tauri-action only uploads bundler outputs, so attach it manually
+      - name: Upload portable exe (Windows)
+        if: matrix.platform == 'windows-latest'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $exe = Get-ChildItem src-tauri/target/release/*.exe |
+            Sort-Object Length -Descending | Select-Object -First 1
+          $version = "${{ github.ref_name }}".TrimStart("v")
+          $dest = "ImaginePlus_${version}_x64-portable.exe"
+          Copy-Item $exe.FullName $dest
+          gh release upload "${{ github.ref_name }}" $dest --clobber
