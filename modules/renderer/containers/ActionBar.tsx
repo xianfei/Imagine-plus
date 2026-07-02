@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useCallback, useState, useEffect } from 'react'
 import { connect } from 'react-redux'
 import classnames from 'classnames'
@@ -107,8 +106,7 @@ function ActionBar({
   }, [savePopperVisible, clearPopperVisible])
 
   return (
-    <div data-tauri-drag-region="deep" className="action-bar" style={{ paddingLeft: navigator.platform.startsWith('Mac') ? "78px" : "0", paddingRight: navigator.platform.startsWith('Win') ? "150px" : "10px" }}>
-
+    <div data-tauri-drag-region="deep" className="action-bar" style={{ paddingLeft: navigator.platform.startsWith('Mac') ? '78px' : '0', paddingRight: navigator.platform.startsWith('Win') ? '150px' : '10px' }}>
 
       <Tooltip title={__('add')} placement="bottom">
         <button type="button" onClick={onAdd}>
@@ -118,7 +116,7 @@ function ActionBar({
 
       <Popper
         visible={savePopperVisible}
-        className='actionbar-popper'
+        className="actionbar-popper"
         popper={(
           <div className="popper-menu">
             <button type="button" onClick={() => handleSaveAction(SaveType.OVER)}>
@@ -148,7 +146,7 @@ function ActionBar({
 
       <Popper
         visible={clearPopperVisible}
-        className='actionbar-popper'
+        className="actionbar-popper"
         popper={(
           <div className="popper-menu">
             <button type="button" onClick={() => handleClearAction(onRemoveAll)}>
@@ -188,7 +186,7 @@ function ActionBar({
 
       {/* the bar root uses data-tauri-drag-region="deep": the whole
           subtree drags, clickable elements are excluded automatically */}
-      <span className='title-app-name'>Imagine Plus</span>
+      <span className="title-app-name">Imagine Plus</span>
 
       {/* <span className='title-app-version' onClick={()=>imagineAPI.ipcSend('about', 1)}>v{pkg.version}</span> */}
 

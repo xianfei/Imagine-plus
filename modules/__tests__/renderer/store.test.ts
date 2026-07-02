@@ -261,6 +261,21 @@ test('set globalOptions', () => {
       quality: 80,
       exportExt: SupportedExt.webp,
     },
+
+    avif: {
+      quality: 50,
+      exportExt: SupportedExt.avif,
+    },
+
+    heic: {
+      quality: 80,
+      exportExt: SupportedExt.jpg,
+    },
+
+    bmp: {
+      quality: 80,
+      exportExt: SupportedExt.jpg,
+    },
   })
 
   store.dispatch(actions.taskAdd([image1, image2]))

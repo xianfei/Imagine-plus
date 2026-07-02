@@ -1,7 +1,17 @@
-import type { ElectronLog } from 'electron-log'
 import {
   AsyncCall, IImageFile, IOptimizeRequest, MainIpcPayload, RendererIpcPayload,
 } from '../common/types'
+
+/** minimal logger surface (formerly electron-log's ElectronLog) */
+export interface ILogger {
+  error(...args: unknown[]): void
+  warn(...args: unknown[]): void
+  info(...args: unknown[]): void
+  verbose(...args: unknown[]): void
+  debug(...args: unknown[]): void
+  silly(...args: unknown[]): void
+  log(...args: unknown[]): void
+}
 
 export interface IFileDropHandlers {
   onEnter(): void
@@ -10,9 +20,9 @@ export interface IFileDropHandlers {
 }
 
 export interface ImagineAPI {
-  logger: ElectronLog
+  logger: ILogger
   ipcSend<T extends keyof RendererIpcPayload>(channel: T, payload: RendererIpcPayload[T]): void,
-  ipcSendSync<T extends keyof RendererIpcPayload>(channel: T, payload: RendererIpcPayload[T]): RendererIpcPayload[T]
+  ipcSendSync<T extends keyof RendererIpcPayload>(channel: T, payload: RendererIpcPayload[T]): unknown
   ipcListen<T extends keyof MainIpcPayload>(channel: T, listener: (payload: MainIpcPayload[T]) => void): void
   optimize: AsyncCall<IOptimizeRequest, IImageFile>
   openExternal(link: string): void;

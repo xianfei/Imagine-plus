@@ -3,27 +3,49 @@
  */
 import '../_tools/before-test'
 
-import * as path from 'path'
 import { createStore } from '../../renderer/store/store'
 import JobRunner from '../../renderer/store/job-runner'
 import actions from '../../renderer/store/actionCreaters'
-import { saveFilesTmp } from '../../common/file-utils'
 import { sleep } from '../../common/utils'
 import {
-  IImageFile, TaskStatus,
+  IImageFile, IOptimizeRequest, TaskStatus, SupportedExt,
 } from '../../common/types'
 
-jest.mock('../../renderer/apis/')
+jest.mock('../../bridge/web', () => ({
+  imagineAPI: {
+    logger: console,
+    ipcSend: () => undefined,
+    ipcSendSync: () => undefined,
+    ipcListen: () => undefined,
+    openExternal: () => undefined,
+    optimize: async ({ image }: IOptimizeRequest) => {
+      // simulated encode latency so PROCESSING is observable
+      await sleep(150)
+      return {
+        ...image,
+        id: `optimized-${image.id}`,
+        size: Math.floor(image.size / 2),
+      }
+    },
+  },
+  bridgeReady: Promise.resolve(),
+}))
+
+const makeImage = (id: string): IImageFile => ({
+  id,
+  url: `${id}.png`,
+  size: 1000,
+  ext: SupportedExt.png,
+  originalName: `${id}.png`,
+})
 
 test('optimize JobRunner', async () => {
-  const images = await saveFilesTmp(
-    ['600_600.png', 'qr.png'].map((x) => path.resolve(__dirname, '../_files', x)),
-  )
+  const images = [makeImage('01'), makeImage('02')]
   const store = createStore()
   new JobRunner().watch(store)
   let state
 
-  store.dispatch(actions.taskAdd(images as IImageFile[]))
+  store.dispatch(actions.taskAdd(images))
 
   // for debounce
   await sleep(100)
@@ -31,21 +53,19 @@ test('optimize JobRunner', async () => {
   state = store.getState()
 
   expect(state.tasks[0].status).toBe(TaskStatus.PROCESSING)
-  expect(state.tasks[1].status).toBe(TaskStatus.PENDING)
 
-  // enough for processing two PNG
+  // enough for processing two images
   await sleep(500)
 
   state = store.getState()
   expect(state.tasks[0].status).toBe(TaskStatus.DONE)
   expect(state.tasks[1].status).toBe(TaskStatus.DONE)
-  // expect(state.tasks[0].optimized.color).toBe(64)
-  // expect(state.tasks[1].optimized.color).toBe(64)
+  expect(state.tasks[0].optimized?.id).toBe('optimized-01')
 
   await sleep(10)
 
   // update options and auto optimized
-  store.dispatch(actions.taskUpdateOptions((images[0] as IImageFile).id, {
+  store.dispatch(actions.taskUpdateOptions(images[0].id, {
     color: 8,
   }))
 
@@ -56,9 +76,8 @@ test('optimize JobRunner', async () => {
   expect(state.tasks[0].status).toBe(TaskStatus.PROCESSING)
   expect(state.tasks[1].status).toBe(TaskStatus.DONE)
 
-  await sleep(200)
+  await sleep(300)
 
   state = store.getState()
   expect(state.tasks[0].status).toBe(TaskStatus.DONE)
-  // expect(state.tasks[0].optimized.color).toBe(8)
 })

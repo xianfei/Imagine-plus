@@ -1,4 +1,6 @@
-import React, { PureComponent, ReactElement, cloneElement, Children } from 'react'
+import React, {
+  PureComponent, ReactElement, cloneElement, Children,
+} from 'react'
 import Popper from './Popper'
 
 import './Tooltip.less'

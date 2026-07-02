@@ -44,28 +44,26 @@ chmod a+x Imagine-x.y.z-x86_64.AppImage # make executable
 
 ## Build and Contribute
 
+This branch is the [Tauri 2](https://v2.tauri.app/) edition: the app shell
+is Rust (`src-tauri/`) and image processing runs on a statically linked
+Rust codec stack — mozjpeg for JPEG (the same encoder sharp used),
+libimagequant palette quantization for PNG, libwebp for WebP, ravif
+(rav1e) for AVIF, macOS ImageIO for HEIC/AVIF decode with a webview
+libheif fallback elsewhere, and fast_image_resize for SIMD Lanczos3
+resizing. EXIF/ICC metadata is preserved via img-parts. Everything
+compiles into a single binary: the macOS app bundle is ~9 MB (vs
+~100 MB+ for the Electron build, which lives on the `master` branch).
+
+Node.js is only needed as a build tool (Vite bundles the React UI);
+there is no Node runtime in the shipped app.
+
 ```bash
 git clone https://github.com/xianfei/Imagine-plus.git
 npm install
-npm run dev
-```
-
-## Tauri edition (this branch, experimental)
-
-This branch also contains a [Tauri 2](https://v2.tauri.app/) rewrite: the
-Electron main process is ported to Rust (`src-tauri/`) and image processing
-runs on a statically linked Rust codec stack instead of sharp — mozjpeg for
-JPEG (same encoder sharp uses), quantette/NeuQuant palette quantization for
-PNG, libwebp for WebP, ravif (rav1e) for AVIF, macOS ImageIO for HEIC/AVIF
-decode, and fast_image_resize for SIMD Lanczos3 resizing. EXIF/ICC metadata
-is preserved via img-parts. Everything is compiled into a single binary:
-the macOS app bundle is ~9 MB (vs ~100 MB+ for the Electron build).
-
-```bash
-npm install
-npm run tauri:dev    # develop (requires Rust toolchain)
-npm run tauri:build  # package (bundle in src-tauri/target/release/bundle)
-cd src-tauri && cargo test   # image pipeline tests
+npm run dev      # tauri dev (requires the Rust toolchain)
+npm run build    # package (bundle in src-tauri/target/release/bundle)
+npm test         # tsc + jest
+cd src-tauri && cargo test   # Rust image pipeline tests
 ```
 
 PNG quantization uses
@@ -78,5 +76,5 @@ Known gaps vs the Electron build: interlaced PNG output is not supported
 
 ## Built on
 
- - [sharp](https://github.com/lovell/sharp): High performance Node.js image processing, the fastest module to resize JPEG, PNG, WebP, AVIF and TIFF images. Uses the libvips library.
- - [Electron](https://electron.atom.io/): Build cross platform desktop apps with JavaScript, HTML, and CSS
+ - [Tauri 2](https://v2.tauri.app/): build small cross-platform desktop apps with a Rust backend and system webviews
+ - [mozjpeg](https://github.com/mozilla/mozjpeg), [libimagequant](https://github.com/ImageOptim/libimagequant), [libwebp](https://developers.google.com/speed/webp), [ravif](https://github.com/kornelski/cavif-rs), [fast_image_resize](https://github.com/cykooz/fast_image_resize), [image-rs](https://github.com/image-rs/image): the Rust image codec stack

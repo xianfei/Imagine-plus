@@ -28,7 +28,7 @@ export default class Modal extends PureComponent<IModalProps, Empty> {
                   <button
                     type="button"
                     className="close"
-                    style={{left: navigator.platform.startsWith('Mac')?"85px":"5px"}}
+                    style={{ left: navigator.platform.startsWith('Mac') ? '85px' : '5px' }}
                     onClick={this.props.onClose}
                   >
                     <Icon name="up" />

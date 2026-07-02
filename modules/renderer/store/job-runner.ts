@@ -12,6 +12,7 @@ const maxRunningNum = () => getSettings().concurrency || autoMaxRunningNum
 
 export default class JobRunner {
   private runningNum = 0
+
   private maxTaskNum = 0
 
   private store?: Store<IState>
@@ -35,15 +36,12 @@ export default class JobRunner {
 
     if (taskCount === 0) {
       this.maxTaskNum = 0
-      // @ts-ignore
       imagineAPI?.ipcSend('setProgressBar', -1)
     } else {
       this.maxTaskNum = Math.max(this.maxTaskNum, taskCount)
       const progress = 1 - taskCount / this.maxTaskNum
-      // @ts-ignore
       imagineAPI?.ipcSend('setProgressBar', progress)
     }
-
   }
 
   private pickPendingTask() {

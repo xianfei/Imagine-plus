@@ -54,12 +54,12 @@ export const createOptimizeOptions = (ext: SupportedExt) => {
       })
       break
 
-      case SupportedExt.bmp:
-        Object.assign(optimizeOptions, {
-          exportExt: SupportedExt.jpg,
-          quality: 80,
-        })
-        break
+    case SupportedExt.bmp:
+      Object.assign(optimizeOptions, {
+        exportExt: SupportedExt.jpg,
+        quality: 80,
+      })
+      break
 
     default:
   }
@@ -245,7 +245,7 @@ export default handleActions<IState, any>({
     const resizeOptions: IResizeOptions = { ...state.globals.resizeOptions, enabled: false }
     const newState = updateGlobalsPartial(state, { resizeOptions })
     return updateTaskList(newState, (list) => list.map((item) => {
-      const { resize: _, ...optionsWithoutResize } = item.options
+      const { resize: omittedResize, ...optionsWithoutResize } = item.options
       return {
         ...item,
         options: optionsWithoutResize,

@@ -81,7 +81,7 @@ async function checkForUpdates() {
   }
 }
 
-const logger = {
+const logger: ImagineAPI['logger'] = {
   error: (...args: unknown[]) => console.error(...args),
   warn: (...args: unknown[]) => console.warn(...args),
   info: (...args: unknown[]) => console.info(...args),
@@ -89,7 +89,7 @@ const logger = {
   debug: (...args: unknown[]) => console.debug(...args),
   silly: (...args: unknown[]) => console.debug(...args),
   log: (...args: unknown[]) => console.log(...args),
-} as unknown as ImagineAPI['logger']
+}
 
 export function createTauriAPI(): ImagineAPI {
   const api: ImagineAPI = {
