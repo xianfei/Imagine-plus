@@ -19,6 +19,7 @@
     height: 54px;
     display: flex;
     align-items: center;
+    padding-right: 20px;
     background: #f7f7f7;
     z-index: 5;
 
@@ -28,6 +29,30 @@
       font-weight: 600;
       color: #333;
       pointer-events: none;
+    }
+
+    .apply-button {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: 0;
+      border-radius: 6px;
+      padding: 7px 12px;
+      background: #5788c0;
+      color: #fff;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.15s;
+
+      &:hover {
+        background: #4a78ac;
+      }
+
+      .icon {
+        width: 15px;
+        height: 15px;
+      }
     }
   }
 
@@ -121,30 +146,7 @@
     padding: 0 24px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-
-    .apply-button {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      border: 0;
-      border-radius: 6px;
-      padding: 8px 14px;
-      background: #5788c0;
-      color: #fff;
-      font-size: 13px;
-      cursor: pointer;
-      transition: background 0.15s;
-
-      &:hover {
-        background: #4a78ac;
-      }
-
-      .icon {
-        width: 16px;
-        height: 16px;
-      }
-    }
+    justify-content: flex-end;
 
     .app-version {
       font-size: 12px;

@@ -111,6 +111,10 @@ function Settings(props: IProps & IDispatchProps) {
           style={{ paddingLeft: navigator.platform.startsWith('Mac') ? '135px' : '55px' }}
         >
           <h1>{__('settings')}</h1>
+          <button type="button" className="apply-button" onClick={onApply}>
+            <Icon name="doneall" />
+            <span>{__('apply_existing')}</span>
+          </button>
         </header>
 
         <section>
@@ -204,10 +208,6 @@ function Settings(props: IProps & IDispatchProps) {
         </section>
 
         <footer>
-          <button type="button" className="apply-button" onClick={onApply}>
-            <Icon name="doneall" />
-            <span>{__('apply_existing')}</span>
-          </button>
           <span
             className="app-version"
             onClick={() => imagineAPI.ipcSend('about' as never, 1 as never)}
