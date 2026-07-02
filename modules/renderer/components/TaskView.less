@@ -34,6 +34,12 @@
       left: 50%;
       transform: translate(-50%, -50%);
     }
+
+    // webviews cannot render heic; hide the broken-image glyph until the
+    // decoded preview replaces the url
+    img[src$=".heic"] {
+      visibility: hidden;
+    }
   }
 
   .image-options {

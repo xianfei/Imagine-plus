@@ -67,6 +67,13 @@ export interface IImageFile {
   size: number
   ext: SupportedExt
   originalName: string
+
+  /**
+   * displayable preview of the source image for formats the webview
+   * cannot render (heic); carried on the optimize result and applied
+   * to the source image's url by the reducer
+   */
+  sourcePreviewUrl?: string
 }
 
 export interface IOptimizeOptions {

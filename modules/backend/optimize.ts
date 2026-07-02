@@ -11,9 +11,7 @@ import {
 } from '../optimizers'
 import { getFileUrl } from '../common/file-utils'
 import store from './configStore'
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const convert = require('heic-convert')
+import { decodeHeic } from './heic'
 
 const optimize = async (
   image: IImageFile,
@@ -39,29 +37,29 @@ const optimize = async (
 
   dest.url = getFileUrl(destPath)
 
+  // webviews cannot render HEIC, so the decoded PNG intermediate
+  // doubles as the source preview for the renderer
+  const intermediate = image.ext === SupportedExt.heic
+    ? sourcePath.replace(/\.heic$/, '.1.png')
+    : null
+
   try {
     dest.size = await fu.getSize(destPath)
+
+    if (intermediate && await fs.pathExists(intermediate)) {
+      dest.sourcePreviewUrl = getFileUrl(intermediate)
+    }
   } catch (err) {
     log.info('optimize', 'miss cache')
 
-    if (image.ext === 'heic') {
-      log.info('optimize', 'converting HEIC to PNG intermediate')
-
-      const intermediate = sourcePath.replace(/\.heic$/, '.1.png')
-
-      try {
-        await fs.access(intermediate)
-      } catch (error) {
+    if (intermediate) {
+      if (!await fs.pathExists(intermediate)) {
         log.info('optimize', 'miss cache (heic intermediate)')
-        const inputBuffer = await fs.readFile(sourcePath)
-        const outputBuffer = await convert({
-          buffer: inputBuffer,
-          format: 'PNG',
-        })
-        await fs.writeFile(intermediate, outputBuffer)
+        await decodeHeic(sourcePath, intermediate)
       }
 
       sourcePath = intermediate
+      dest.sourcePreviewUrl = getFileUrl(intermediate)
     }
 
     const globalOptions: IOptimizeOptions = {

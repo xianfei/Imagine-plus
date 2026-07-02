@@ -93,8 +93,10 @@ class Alone extends PureComponent<IAloneProps & IAloneDispatchProps, IAloneState
 
     if (!task) return
 
-    if (task.image.ext === SupportedExt.heic) {
-      alert("Preview is not supported for HEIC images.")
+    // heic sources become previewable once the backend has decoded the
+    // PNG intermediate (image.url is swapped by the reducer); until then
+    // ignore the switch instead of showing a broken image
+    if (task.image.ext === SupportedExt.heic && task.image.url.endsWith('.heic')) {
       return
     }
     this.setState({

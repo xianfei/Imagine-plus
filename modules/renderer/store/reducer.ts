@@ -175,10 +175,21 @@ export default handleActions<IState, any>({
 
   [ACTIONS.TASK_OPTIMIZE_SUCCESS](state, action: Action<{ id: string, optimized: IImageFile }>) {
     const { id, optimized } = action.payload
-    return updateTaskItem(state, id, {
-      optimized,
-      status: TaskStatus.DONE,
-    })
+    return updateTaskList(state, (tasks) => tasks.map((task) => {
+      if (task.id !== id) return task
+
+      // swap the unrenderable source url (heic) for the decoded preview
+      const image = optimized.sourcePreviewUrl && task.image.url !== optimized.sourcePreviewUrl
+        ? { ...task.image, url: optimized.sourcePreviewUrl }
+        : task.image
+
+      return {
+        ...task,
+        image,
+        optimized,
+        status: TaskStatus.DONE,
+      }
+    }))
   },
 
   [ACTIONS.TASK_OPTIMIZE_FAIL](state, action: Action<string>) {
