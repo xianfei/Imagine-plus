@@ -1,6 +1,6 @@
 [package]
 name = "imagine-plus"
-version = "0.10.0"
+version = "0.10.1"
 description = "PNG/JPEG/WebP/AVIF image optimization app"
 authors = ["meowtec <bertonzh@gmail.com>", "xianfei <xianfei@bupt.cn>"]
 license = "ISC"
