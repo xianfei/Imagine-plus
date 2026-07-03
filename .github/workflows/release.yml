@@ -4,21 +4,45 @@ on:
   push:
     tags: ['v*']
 
+permissions:
+  contents: write
+
 jobs:
+  # create the GitHub release once, as a draft, so the parallel build jobs
+  # can each upload their renamed assets into it without racing to create it
+  create-release:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+          REPO: ${{ github.repository }}
+        run: |
+          if ! gh release view "$TAG" -R "$REPO" >/dev/null 2>&1; then
+            gh release create "$TAG" -R "$REPO" \
+              --draft \
+              --title "ImaginePlus $TAG" \
+              --notes "See the assets below to download this version."
+          fi
+
   publish-tauri:
-    permissions:
-      contents: write
+    needs: create-release
     strategy:
       fail-fast: false
       matrix:
         include:
           - platform: macos-latest
+            os: macOS
             args: '--target aarch64-apple-darwin'
           - platform: macos-latest
+            os: macOS
             args: '--target x86_64-apple-darwin'
           - platform: ubuntu-22.04
+            os: Linux
             args: ''
           - platform: windows-latest
+            os: Windows
             args: ''
 
     runs-on: ${{ matrix.platform }}
@@ -53,30 +77,57 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # runs beforeBuildCommand (vite build), cargo build, bundles, and
-      # uploads the artifacts to the GitHub release for this tag
-      - uses: tauri-apps/tauri-action@v0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # build only (no tagName) so we can rename the bundles before upload;
+      # exposes the built bundle paths via steps.build.outputs.artifactPaths
+      - id: build
+        uses: tauri-apps/tauri-action@v0
         with:
-          tagName: ${{ github.ref_name }}
-          releaseName: 'ImaginePlus ${{ github.ref_name }}'
-          releaseBody: 'See the assets below to download this version.'
-          releaseDraft: false
-          prerelease: false
           args: ${{ matrix.args }}
 
-      # portable (no-install) build: the bare exe with embedded assets;
-      # tauri-action only uploads bundler outputs, so attach it manually
-      - name: Upload portable exe (Windows)
-        if: matrix.platform == 'windows-latest'
-        shell: pwsh
+      # rename each bundle to ImaginePlus_<OS>_<arch>… (swap the version
+      # token for the OS label) and upload to the draft release. The Windows
+      # portable exe — the bare binary with embedded assets — is added on
+      # top, since tauri-action only reports bundler outputs.
+      - name: Rename and upload assets
+        shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ARTIFACT_PATHS: ${{ steps.build.outputs.artifactPaths }}
+          TAG: ${{ github.ref_name }}
+          REPO: ${{ github.repository }}
+          OS_NAME: ${{ matrix.os }}
         run: |
-          $exe = Get-ChildItem src-tauri/target/release/*.exe |
-            Sort-Object Length -Descending | Select-Object -First 1
-          $version = "${{ github.ref_name }}".TrimStart("v")
-          $dest = "ImaginePlus_${version}_x64-portable.exe"
-          Copy-Item $exe.FullName $dest
-          gh release upload "${{ github.ref_name }}" $dest --clobber
+          set -euo pipefail
+          version="${TAG#v}"
+
+          files=()
+          if [ -n "${ARTIFACT_PATHS:-}" ]; then
+            while IFS= read -r p; do
+              [ -n "$p" ] && files+=("$p")
+            done < <(printf '%s' "$ARTIFACT_PATHS" | jq -r '.[]')
+          fi
+
+          portable=""
+          if [ "$OS_NAME" = "Windows" ]; then
+            portable=$(ls -S src-tauri/target/release/*.exe | head -n1)
+            files+=("$portable")
+          fi
+
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No build artifacts found to upload" >&2
+            exit 1
+          fi
+
+          mkdir -p dist-release
+          for f in "${files[@]}"; do
+            if [ -n "$portable" ] && [ "$f" = "$portable" ]; then
+              newbase="ImaginePlus_${OS_NAME}_x64-portable.exe"
+            else
+              base="$(basename "$f")"
+              newbase="${base/ImaginePlus_${version}_/ImaginePlus_${OS_NAME}_}"
+            fi
+            echo "  $(basename "$f")  ->  $newbase"
+            cp "$f" "dist-release/$newbase"
+          done
+
+          gh release upload "$TAG" dist-release/* -R "$REPO" --clobber
