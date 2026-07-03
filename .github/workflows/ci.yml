@@ -78,6 +78,7 @@ jobs:
       matrix:
         include:
           - name: windows-x64
+            artifact: ImaginePlus_Windows_x64
             platform: windows-latest
             args: ''
             rust-targets: ''
@@ -88,16 +89,19 @@ jobs:
               src-tauri/target/release/bundle/msi/*.msi
               src-tauri/target/release/*.exe
           - name: macos-aarch64
+            artifact: ImaginePlus_macOS_arm64
             platform: macos-latest
             args: '--target aarch64-apple-darwin'
             rust-targets: aarch64-apple-darwin
             bundle-path: src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg
           - name: macos-x64
+            artifact: ImaginePlus_macOS_x64
             platform: macos-latest
             args: '--target x86_64-apple-darwin'
             rust-targets: x86_64-apple-darwin
             bundle-path: src-tauri/target/x86_64-apple-darwin/release/bundle/dmg/*.dmg
           - name: linux-x64
+            artifact: ImaginePlus_Linux_x64
             platform: ubuntu-22.04
             args: ''
             rust-targets: ''
@@ -140,6 +144,6 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ImaginePlus-${{ matrix.name }}
+          name: ${{ matrix.artifact }}
           path: ${{ matrix.bundle-path }}
           if-no-files-found: error
