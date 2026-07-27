@@ -120,6 +120,13 @@ jobs:
 
           mkdir -p dist-release
           for f in "${files[@]}"; do
+            # tauri-action also reports the macOS .app bundle, which is a
+            # directory; the .dmg already ships it and release assets must
+            # be single files
+            if [ -d "$f" ]; then
+              echo "  $(basename "$f")  ->  skipped (directory)"
+              continue
+            fi
             if [ -n "$portable" ] && [ "$f" = "$portable" ]; then
               newbase="ImaginePlus_${OS_NAME}_x64-portable.exe"
             else
@@ -129,5 +136,10 @@ jobs:
             echo "  $(basename "$f")  ->  $newbase"
             cp "$f" "dist-release/$newbase"
           done
+
+          if [ -z "$(ls -A dist-release)" ]; then
+            echo "No uploadable files after filtering" >&2
+            exit 1
+          fi
 
           gh release upload "$TAG" dist-release/* -R "$REPO" --clobber
