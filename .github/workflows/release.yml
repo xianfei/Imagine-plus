@@ -103,7 +103,12 @@ jobs:
           files=()
           if [ -n "${ARTIFACT_PATHS:-}" ]; then
             while IFS= read -r p; do
-              [ -n "$p" ] && files+=("$p")
+              # the Windows runner's jq ends lines with CRLF and reports
+              # native backslash paths; both trip up the coreutils below
+              p="${p%$'\r'}"
+              p="${p//\\//}"
+              [ -n "$p" ] || continue
+              files+=("$p")
             done < <(printf '%s' "$ARTIFACT_PATHS" | jq -r '.[]')
           fi
 
