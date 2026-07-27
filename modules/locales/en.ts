@@ -42,4 +42,9 @@ export default {
   concurrency: 'Parallel tasks',
   concurrency_auto: 'Auto ({0})',
   apply_existing: 'Re-optimize existing tasks with these defaults',
+  processing_progress: 'Processing {0}/{1}',
+  save_all_processing: '{0} task(s) still processing, only the {1} finished image(s) will be saved.',
+  save_anyway: 'Save anyway',
+  cancel: 'Cancel',
+  save_partial: 'Saved {0} image(s), {1} task(s) still processing',
 }

@@ -35,6 +35,20 @@
         flex: 1;
     }
 
+    .task-progress {
+        -webkit-app-region: no-drag;
+        display: flex;
+        align-items: center;
+        margin-left: 16px;
+        height: 50px;
+
+        .task-progress-text {
+            color: #888;
+            font-size: 0.8em;
+            margin-left: 6px;
+        }
+    }
+
     .expand-button .icon {
         margin-left: -8px;
     }
@@ -121,6 +135,28 @@
         span,
         .icon {
             color: #f60;
+        }
+    }
+}
+
+.save-confirm {
+    max-width: 220px;
+
+    .save-confirm-text {
+        margin: 0 0 8px;
+        padding: 0 15px;
+        line-height: 1.5;
+        color: #666;
+        text-align: left;
+    }
+
+    > button:disabled {
+        color: #ccc;
+        cursor: default;
+
+        &:hover {
+            background: none;
+            color: #ccc;
         }
     }
 }

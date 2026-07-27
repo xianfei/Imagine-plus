@@ -42,4 +42,9 @@ export default {
   concurrency: '并行任务数',
   concurrency_auto: '自动（{0}）',
   apply_existing: '用这些默认值重新优化现有任务',
+  processing_progress: '处理中 {0}/{1}',
+  save_all_processing: '还有 {0} 个任务正在处理，将只保存已完成的 {1} 张图片。',
+  save_anyway: '仍然保存',
+  cancel: '取消',
+  save_partial: '已保存 {0} 张图片，{1} 个任务仍在处理中',
 }

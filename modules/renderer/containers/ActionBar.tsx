@@ -5,9 +5,12 @@ import Icon from '../components/Icon'
 import Popper from '../components/Popper'
 import Tooltip from '../components/Tooltip'
 import WindowControls from '../components/WindowControls'
+import ProgressRing from '../components/ProgressRing'
 import ResizePanel from './ResizePanel'
 import actions from '../store/actionCreaters'
-import { SaveType, IUpdateInfo, IState } from '../../common/types'
+import {
+  SaveType, IUpdateInfo, IState, TaskStatus,
+} from '../../common/types'
 import * as apis from '../apis'
 import __ from '../../locales'
 import pkg from '../../../package.json'
@@ -19,6 +22,8 @@ import { imagineAPI } from '../../bridge/web'
 interface IActionBarStateProps {
   count: number
   sizeIncreaseCount: number
+  runningCount: number
+  savableCount: number
   updateInfo: IUpdateInfo | undefined
   optionsVisible: boolean
   resizeEnabled: boolean
@@ -36,6 +41,8 @@ interface IActionBarDispatchProps {
 function ActionBar({
   count,
   sizeIncreaseCount,
+  runningCount,
+  savableCount,
   updateInfo,
   optionsVisible,
   resizeEnabled,
@@ -49,6 +56,8 @@ function ActionBar({
   const [savePopperVisible, setSavePopperVisible] = useState(false)
   const [clearPopperVisible, setClearPopperVisible] = useState(false)
   const [resizePanelVisible, setResizePanelVisible] = useState(false)
+  // save type waiting for confirmation while tasks are still running
+  const [pendingSaveType, setPendingSaveType] = useState<SaveType | null>(null)
 
   const handleOptionsVisibleClick = () => {
     onOptionsVisibleToggle(!optionsVisible)
@@ -61,6 +70,7 @@ function ActionBar({
   const handleSaveButtonClick = () => {
     setSavePopperVisible(!savePopperVisible)
     setClearPopperVisible(false)
+    setPendingSaveType(null)
   }
 
   const handleClearButtonClick = () => {
@@ -77,7 +87,23 @@ function ActionBar({
   }
 
   const handleSaveAction = (type: SaveType) => {
+    // some tasks are not optimized yet, ask before saving a partial result
+    if (runningCount) {
+      setPendingSaveType(type)
+      return
+    }
     onSave(type)
+    setSavePopperVisible(false)
+  }
+
+  const handleSaveConfirm = () => {
+    if (pendingSaveType !== null) onSave(pendingSaveType)
+    setPendingSaveType(null)
+    setSavePopperVisible(false)
+  }
+
+  const handleSaveCancel = () => {
+    setPendingSaveType(null)
     setSavePopperVisible(false)
   }
 
@@ -93,6 +119,7 @@ function ActionBar({
       if (!target.closest('.popper') && !target.closest('.expand-button')) {
         setSavePopperVisible(false)
         setClearPopperVisible(false)
+        setPendingSaveType(null)
       }
     }
 
@@ -118,17 +145,31 @@ function ActionBar({
         visible={savePopperVisible}
         className="actionbar-popper"
         popper={(
-          <div className="popper-menu">
-            <button type="button" onClick={() => handleSaveAction(SaveType.OVER)}>
-              {__('save_cover')}
-            </button>
-            <button type="button" onClick={() => handleSaveAction(SaveType.NEW_NAME)}>
-              {__('save_new')}
-            </button>
-            <button type="button" onClick={() => handleSaveAction(SaveType.NEW_DIR)}>
-              {__('save_dir')}
-            </button>
-          </div>
+          pendingSaveType !== null ? (
+            <div className="popper-menu save-confirm">
+              <p className="save-confirm-text">
+                {__('save_all_processing', runningCount, savableCount)}
+              </p>
+              <button type="button" onClick={handleSaveConfirm} disabled={!savableCount}>
+                {__('save_anyway')}
+              </button>
+              <button type="button" onClick={handleSaveCancel}>
+                {__('cancel')}
+              </button>
+            </div>
+          ) : (
+            <div className="popper-menu">
+              <button type="button" onClick={() => handleSaveAction(SaveType.OVER)}>
+                {__('save_cover')}
+              </button>
+              <button type="button" onClick={() => handleSaveAction(SaveType.NEW_NAME)}>
+                {__('save_new')}
+              </button>
+              <button type="button" onClick={() => handleSaveAction(SaveType.NEW_DIR)}>
+                {__('save_dir')}
+              </button>
+            </div>
+          )
         )}
       >
         <Tooltip title={__('save')} placement="bottom">
@@ -188,6 +229,21 @@ function ActionBar({
           subtree drags, clickable elements are excluded automatically */}
       <span className="title-app-name">Imagine Plus</span>
 
+      {
+        runningCount ? (
+          <Tooltip title={__('processing_progress', count - runningCount, count)} placement="bottom">
+            <div className="task-progress">
+              <ProgressRing progress={count ? (count - runningCount) / count : 0} />
+              <span className="task-progress-text">
+                {count - runningCount}
+                /
+                {count}
+              </span>
+            </div>
+          </Tooltip>
+        ) : null
+      }
+
       {/* <span className='title-app-version' onClick={()=>imagineAPI.ipcSend('about', 1)}>v{pkg.version}</span> */}
 
       <div className="blank" />
@@ -234,6 +290,16 @@ export default connect<IActionBarStateProps, IActionBarDispatchProps, Record<str
   resizeEnabled: state.globals.resizeOptions.enabled,
   sizeIncreaseCount: state.tasks.reduce(
     (count, item) => (count + (isTaskSizeIncreased(item) ? 1 : 0)),
+    0,
+  ),
+  savableCount: state.tasks.reduce(
+    (count, item) => (count + (item.optimized ? 1 : 0)),
+    0,
+  ),
+  runningCount: state.tasks.reduce(
+    (count, item) => (count + (
+      item.status === TaskStatus.PENDING || item.status === TaskStatus.PROCESSING ? 1 : 0
+    )),
     0,
   ),
 }), (dispatch) => ({

@@ -17,6 +17,16 @@ export default function listenIpc() {
   }
 
   imagineAPI.ipcListen(IpcChannel.SAVED, () => {
+    const partial = apis.takePartialSaveAll()
+
+    if (partial) {
+      showMessage({
+        message: __('save_partial', partial.savedCount, partial.runningCount),
+        type: 'warning',
+      })
+      return
+    }
+
     showMessage({
       message: __('save_success'),
       type: 'success',
