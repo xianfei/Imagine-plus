@@ -8,6 +8,7 @@ What's changed in this fork:
 - UI improvements
 - More features (keep metadata, progressive encode, etc.)
 - Comparison mode
+- Refactor with [Tauri 2](https://v2.tauri.app/) for very small app bundle (~9 MB on macOS, vs ~100 MB+ for the Electron build, v0.10 and above)
 - Support more formats (see the table below)
 
 |  | from JPG | from PNG | from WebP | from AVIF | from HEIC | from BMP |
