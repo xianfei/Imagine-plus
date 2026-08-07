@@ -1,4 +1,5 @@
 use std::fs;
+use std::io::Read;
 use std::path::{Path, PathBuf};
 
 use md5::{Digest, Md5};
@@ -23,20 +24,55 @@ fn md5_hex(data: &[u8]) -> String {
     hex::encode(Md5::digest(data))
 }
 
-/// Sniff the real image type from content, normalized the way the
-/// Electron backend (file-type) did: jpeg -> jpg, heif -> heic.
-/// heic/avif are accepted everywhere: platforms without ImageIO decode
-/// them in the webview (libheif-js / canvas) via write_intermediate.
-fn sniff_ext(path: &Path) -> Option<String> {
-    let kind = infer::get_from_path(path).ok()??;
-    let ext = match kind.extension() {
-        "jpg" | "jpeg" => "jpg",
-        "heif" => "heic",
-        other => other,
+/// `infer` 0.16 only recognizes the 8-bit `heic` HEIF brand. Apple also
+/// writes 10-bit HEVC images with the `heix` brand, so inspect the ISO BMFF
+/// `ftyp` box ourselves before falling back to the library matchers.
+fn has_heix_brand(bytes: &[u8]) -> bool {
+    if bytes.len() < 16 || &bytes[4..8] != b"ftyp" {
+        return false;
+    }
+
+    let declared_size = u32::from_be_bytes([bytes[0], bytes[1], bytes[2], bytes[3]]) as usize;
+    let box_end = match declared_size {
+        0 => bytes.len(),
+        16.. => declared_size.min(bytes.len()),
+        _ => return false,
     };
+
+    &bytes[8..12] == b"heix"
+        || bytes[16..box_end]
+            .chunks_exact(4)
+            .any(|brand| brand == b"heix")
+}
+
+fn sniff_bytes(bytes: &[u8]) -> Option<String> {
+    let ext = if has_heix_brand(bytes) {
+        "heic"
+    } else {
+        match infer::get(bytes)?.extension() {
+            "jpg" | "jpeg" => "jpg",
+            "heif" => "heic",
+            other => other,
+        }
+    };
+
     SUPPORTED_EXTS
         .contains(&ext)
         .then(|| ext.to_string())
+}
+
+/// Sniff the real image type from content, normalized the way the
+/// Electron backend (file-type) did: jpeg -> jpg, heif/heix -> heic.
+/// heic/avif are accepted everywhere: platforms without ImageIO decode
+/// them in the webview (libheif-js / canvas) via write_intermediate.
+fn sniff_ext(path: &Path) -> Option<String> {
+    let mut header = Vec::with_capacity(8192);
+    fs::File::open(path)
+        .ok()?
+        .take(8192)
+        .read_to_end(&mut header)
+        .ok()?;
+    sniff_bytes(&header)
 }
 
 /// Port of `flattenFiles`: walk a dir/file list into a flat file list.
@@ -118,7 +154,24 @@ pub fn reext(filename: &str, ext: &str) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::reext;
+    use super::{reext, sniff_bytes};
+
+    #[test]
+    fn recognizes_main10_heix_as_heic() {
+        // Header from an Apple HEIC whose major brand is `heix`. This is not
+        // recognized by infer 0.16, but is a valid 10-bit HEVC still image.
+        let header = b"\0\0\0 ftypheix\0\0\0\0mif1MiHEmiafheix";
+
+        assert!(infer::get(header).is_none());
+        assert_eq!(sniff_bytes(header).as_deref(), Some("heic"));
+    }
+
+    #[test]
+    fn recognizes_compatible_heix_brand() {
+        let header = b"\0\0\0\x18ftypmif1\0\0\0\0heix";
+
+        assert_eq!(sniff_bytes(header).as_deref(), Some("heic"));
+    }
 
     #[test]
     fn reext_matches_ts_behavior() {

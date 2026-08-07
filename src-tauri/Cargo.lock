@@ -2025,7 +2025,7 @@ dependencies = [
 
 [[package]]
 name = "imagine-plus"
-version = "0.10.2"
+version = "0.10.3"
 dependencies = [
  "fast_image_resize",
  "hex",
