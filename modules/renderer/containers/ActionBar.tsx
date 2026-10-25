@@ -14,7 +14,7 @@ import {
 import * as apis from '../apis'
 import __ from '../../locales'
 import pkg from '../../../package.json'
-import { isTaskSizeIncreased } from '../../common/task'
+import { isTaskSizeIncreased, isTaskSavable } from '../../common/task'
 
 import './ActionBar.less'
 import { imagineAPI } from '../../bridge/web'
@@ -293,7 +293,7 @@ export default connect<IActionBarStateProps, IActionBarDispatchProps, Record<str
     0,
   ),
   savableCount: state.tasks.reduce(
-    (count, item) => (count + (item.optimized ? 1 : 0)),
+    (count, item) => (count + (isTaskSavable(item) ? 1 : 0)),
     0,
   ),
   runningCount: state.tasks.reduce(

@@ -14,6 +14,7 @@ import {
   Empty,
 } from '../../common/types'
 import __ from '../../locales'
+import { isTaskSavable } from '../../common/task'
 
 import './TaskView.less'
 
@@ -126,12 +127,14 @@ class TaskView extends PureComponent<ITaskProps & ITaskDispatchProps, Empty> {
                 <div className="popper-menu">
                   <button
                     type="button"
+                    disabled={!isTaskSavable(task)}
                     onClick={(e) => this.handleSave(e, SaveType.OVER)}
                   >
                     {__('save')}
                   </button>
                   <button
                     type="button"
+                    disabled={!isTaskSavable(task)}
                     onClick={(e) => this.handleSave(e, SaveType.SAVE_AS)}
                   >
                     {__('save_as')}
@@ -139,7 +142,7 @@ class TaskView extends PureComponent<ITaskProps & ITaskDispatchProps, Empty> {
                 </div>
               )}
             >
-              <button type="button" onClick={this.stopEvent}>
+              <button type="button" disabled={!isTaskSavable(task)} onClick={this.stopEvent}>
                 <Icon name="down" />
               </button>
             </Popper>

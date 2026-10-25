@@ -155,6 +155,7 @@ export default handleActions<IState, any>({
 
     return updateTaskItem(state, id, {
       options,
+      optimized: undefined,
       status: TaskStatus.PENDING,
       saved: false,
     })
@@ -166,6 +167,7 @@ export default handleActions<IState, any>({
 
     return updateTaskItem(state, id, {
       options: getInitialTaskOptions(exportExt, defaultOptions),
+      optimized: undefined,
       status: TaskStatus.PENDING,
       saved: false,
     })
@@ -223,6 +225,7 @@ export default handleActions<IState, any>({
       return {
         ...item,
         options: getInitialTaskOptions(exportExt, defaultOptions),
+        optimized: undefined,
         status: TaskStatus.PENDING,
         saved: false,
       }
@@ -253,6 +256,7 @@ export default handleActions<IState, any>({
     return updateTaskList(newState, (list) => list.map((item) => ({
       ...item,
       options: { ...item.options, resize: resizeOptions },
+      optimized: undefined,
       status: TaskStatus.PENDING,
       saved: false,
     })))
@@ -266,6 +270,7 @@ export default handleActions<IState, any>({
       return {
         ...item,
         options: optionsWithoutResize,
+        optimized: undefined,
         status: TaskStatus.PENDING,
         saved: false,
       }

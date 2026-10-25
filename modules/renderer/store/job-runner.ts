@@ -1,6 +1,6 @@
 import { Store } from 'redux'
 import { debounce } from 'lodash'
-import { TaskStatus, IState } from '../../common/types'
+import { TaskStatus, IState, ITaskItem } from '../../common/types'
 import actions from './actionCreaters'
 import { getSettings } from './storage'
 import { imagineAPI } from '../../bridge/web'
@@ -12,6 +12,8 @@ const maxRunningNum = () => getSettings().concurrency || autoMaxRunningNum
 
 export default class JobRunner {
   private runningNum = 0
+
+  private runningTasks = new Set<string>()
 
   private maxTaskNum = 0
 
@@ -48,13 +50,24 @@ export default class JobRunner {
     const { store } = this
     if (!store) return null
     const state = store.getState()
-    return state.tasks.find((task) => task.status === TaskStatus.PENDING)
+    return state.tasks.find((task) => (
+      task.status === TaskStatus.PENDING && !this.runningTasks.has(task.id)
+    ))
+  }
+
+  private isCurrentTask(task: ITaskItem) {
+    const current = this.store?.getState().tasks.find((item) => item.id === task.id)
+    // Redux replaces options when settings change. Compare the snapshot,
+    // including task identity, so late results cannot complete a newer task.
+    return current?.status === TaskStatus.PROCESSING
+      && current.options === task.options
+      && current.image === task.image
   }
 
   private async start() {
-    this.runningNum += 1
     const { store } = this
     if (!store) return
+    this.runningNum += 1
     this.setProgressBar()
 
     // eslint-disable-next-line no-constant-condition
@@ -63,13 +76,22 @@ export default class JobRunner {
 
       if (!task) break
 
+      // Let an obsolete encode finish before starting this image again:
+      // concurrent encodes can otherwise write the same backend cache file.
+      this.runningTasks.add(task.id)
       try {
         store.dispatch(actions.taskOptimizeStart(task.id))
         const optimized = await imagineAPI.optimize(task)
-        store.dispatch(actions.taskOptimizeSuccess(task.id, optimized))
+        if (this.isCurrentTask(task)) {
+          store.dispatch(actions.taskOptimizeSuccess(task.id, optimized))
+        }
       } catch (err) {
         imagineAPI?.logger.error(err)
-        store.dispatch(actions.taskOptimizeFail(task.id))
+        if (this.isCurrentTask(task)) {
+          store.dispatch(actions.taskOptimizeFail(task.id))
+        }
+      } finally {
+        this.runningTasks.delete(task.id)
       }
       this.setProgressBar()
     }

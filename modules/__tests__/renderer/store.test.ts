@@ -11,6 +11,7 @@ import {
   TaskStatus,
   SupportedExt,
   BusyKind,
+  ResizeMode,
 } from '../../common/types'
 
 const image1: IImageFile = {
@@ -240,6 +241,39 @@ test('task fail', () => {
     },
   ])
 })
+
+test.each(['options', 'format', 'defaults', 'resize', 'clear resize'])(
+  '%s changes invalidate the previous saved result immediately',
+  (change) => {
+    const store = createStore()
+    store.dispatch(actions.taskAdd([image1]))
+    store.dispatch(actions.taskOptimizeSuccess(image1.id, { ...image1, id: 'result' }))
+    store.dispatch(actions.taskSaved(['result']))
+    expect(store.getState().tasks[0].saved).toBe(true)
+
+    switch (change) {
+      case 'options':
+        store.dispatch(actions.taskUpdateOptions(image1.id, { exportExt: SupportedExt.png, color: 8 }))
+        break
+      case 'format':
+        store.dispatch(actions.taskUpdateExport(image1.id, SupportedExt.jpg))
+        break
+      case 'defaults':
+        store.dispatch(actions.optionsApply())
+        break
+      case 'resize':
+        store.dispatch(actions.resizeApply({ enabled: true, mode: ResizeMode.LONG_EDGE, value: 600 }))
+        break
+      default:
+        store.dispatch(actions.resizeClear())
+    }
+
+    expect(store.getState().tasks[0]).toMatchObject({ status: TaskStatus.PENDING, saved: false })
+    expect(store.getState().tasks[0].optimized).toBeUndefined()
+    store.dispatch(actions.taskSaved(['result']))
+    expect(store.getState().tasks[0].saved).toBe(false)
+  },
+)
 
 test('globals', () => {
   const store = createStore()

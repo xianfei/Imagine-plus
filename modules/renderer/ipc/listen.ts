@@ -2,7 +2,7 @@ import actions from '../store/actionCreaters'
 import { getActiveTask } from '../store/selectors'
 import store from '../store/store'
 import {
-  IpcChannel, IImageFile, SaveType, ITaskItem, IUpdateInfo, IBusyChange,
+  IpcChannel, IImageFile, SaveType, IUpdateInfo, IBusyChange,
 } from '../../common/types'
 import { showMessage } from '../components/Messager'
 import * as apis from '../apis'
@@ -37,13 +37,12 @@ export default function listenIpc() {
   imagineAPI.ipcListen(IpcChannel.SAVE, (type: SaveType) => {
     const state = store.getState()
     const { activeId } = state.globals
-    let task: ITaskItem | undefined
     if (activeId) {
-      task = getActiveTask(state)
+      const task = getActiveTask(state)
       if (task && task.optimized) {
         apis.fileSave([task.optimized], type)
-        return
       }
+      return
     }
     apis.fileSaveAll(type)
   })
